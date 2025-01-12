@@ -1,0 +1,139 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "name": "Klasik",
+            "description": "Novels that explore futuristic concepts and advanced technology."
+        },
+        {
+            "id": 2,
+            "name": "Gizem",
+            "description": "Novels that contain magical or supernatural elements."
+        },
+        {
+            "id": 3,
+            "name": "Bilim Kurgu",
+            "description": "Novels that involve solving a crime or uncovering secrets."
+        },
+        {
+            "id": 4,
+            "name": "Fantastik",
+            "description": "Novels that focus on romantic relationships."
+        },
+        {
+            "id": 5,
+            "name": "Romantik",
+            "description": "Novels that aim to evoke fear and suspense."
+        },
+        {
+            "id": 6,
+            "name": "Dramatik",
+            "description": "Novels set in a specific historical period."
+        },
+        {
+            "id": 7,
+            "name": "Tarihi",
+            "description": "Novels that are characterized by excitement and suspense."
+        },
+        {
+            "id": 8,
+            "name": "Kurgusal Tarih",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 9,
+            "name": "Macera",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 10,
+            "name": "Psikolojik",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 11,
+            "name": "Korku",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 12,
+            "name": "Gerilim",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 13,
+            "name": "Aksiyon",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 14,
+            "name": "Komedi",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 15,
+            "name": "Bilim",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 16,
+            "name": "Biyografi",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 17,
+            "name": "Otobiyografi",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 18,
+            "name": "Tarih",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 19,
+            "name": "Politika",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 20,
+            "name": "Felsefe",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 21,
+            "name": "Din",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 22,
+            "name": "Mitoloji",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 23,
+            "name": "Efsane",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 24,
+            "name": "Kültür",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 25,
+            "name": "Sanat",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 26,
+            "name": "Sanat",
+            "description": "Books that are based on factual information."
+        },
+        {
+            "id": 27,
+            "name": "Distopya",
+            "description": "Books that are based on factual information."
+        }
+    ]
+}
