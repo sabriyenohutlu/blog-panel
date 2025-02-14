@@ -1,8 +1,10 @@
-import path from 'path';
 import { lazy } from 'react';
 import NovelReviewPage from '../pages/NovelReviewPage';
-import AddNovelReviewPage from '../pages/AddNovelReviewPage';
-import NovelTable from '../components/Novel/NovelTable/NovelTable';
+import ContentManagement from '../components/ContentManagement/ContentManagement';
+import UserManagement from '../components/UserManagement/UserManagement';
+import NovelReviewTable from '../components/Novel/NovelReview/NovelReviewTable';
+import AddNovelReview from '../components/Novel/NovelReview/AddNovelReview';
+
 const Index = lazy(() => import('../pages/Index'));
 
 const routes = [
@@ -13,21 +15,30 @@ const routes = [
         layout: 'default',
     },
     {
-        path:"/roman-incelemeleri",
-        element:<NovelReviewPage/>,
-        layout:"default"
-    },
-    { 
-        path:"/roman-incelemesi-ekle",
-        element:<AddNovelReviewPage/>,
-        layout:"default"
+        path: '/icerik-yönetimi',
+        element: <ContentManagement />,
+        layout: 'default',
     },
     {
-        path: '/roman',
-        element:<NovelTable/>,
+        path: '/kullanici-yonetimi',
+        element: <UserManagement />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yönetimi/roman',
+        element: <NovelReviewPage />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yönetimi/roman/roman-incelemeleri',
+        element: <NovelReviewTable />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yönetimi/roman/roman-incelemesi-ekle',
+        element: <AddNovelReview />,
         layout: 'default',
     }
-
 ];
 
 export { routes };

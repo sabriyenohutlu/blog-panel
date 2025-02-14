@@ -1,0 +1,46 @@
+{
+    "periods": [
+        {
+            "id":1,
+            "name": "Renaissance",
+            "startYear": 1300,
+            "endYear": 1600,
+            "description": "A period of great cultural change and achievement, marked by a revival of classical learning and wisdom."
+        },
+        {
+            "id":2,
+            "name": "Enlightenment",
+            "startYear": 1600,
+            "endYear": 1800,
+            "description": "An intellectual and philosophical movement that dominated the world of ideas in Europe during the 18th century."
+        },
+        {
+            "id":3,
+            "name": "Romanticism",
+            "startYear": 1800,
+            "endYear": 1850,
+            "description": "An artistic, literary, and intellectual movement that originated in Europe toward the end of the 18th century."
+        },
+        {
+            "id":4,
+            "name": "Victorian",
+            "startYear": 1837,
+            "endYear": 1901,
+            "description": "The period of Queen Victoria's reign, marked by a strict social hierarchy and a focus on morality and family values."
+        },
+        {
+            "id":5,
+            "name": "Modernism",
+            "startYear": 1900,
+            "endYear": 1950,
+            "description": "A cultural movement that sought to break away from traditional forms and embrace new, innovative ways of thinking and creating."
+        },
+        {
+            "id":6,
+            "name": "Postmodernism",
+            "startYear": 1950,
+            "endYear": 2000,
+            "description": "A broad movement that developed in the mid- to late-20th century, characterized by a skeptical, critical approach to traditional narratives and ideologies."
+        }
+    ]
+}

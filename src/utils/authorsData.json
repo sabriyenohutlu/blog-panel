@@ -1,0 +1,27 @@
+[
+    {
+        "author_id": 1,
+        "value": "John Doe",
+        "label": "John Doe"
+    },
+    {
+        "author_id": 2,
+        "value": "Jane Smith",
+        "label": "Jane Smith"
+    },
+    {
+        "author_id": 3,
+        "value": "Alice Johnson",
+        "label": "Alice Johnson"
+    },
+    {
+        "author_id": 4,
+        "value": "Bob Brown",
+        "label": "Bob Brown"
+    },
+    {
+        "author_id": 5,
+        "value": "Charlie Davis",
+        "label": "Charlie Davis"
+    }
+]
