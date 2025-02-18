@@ -1,27 +1,45 @@
-[
-    {
-        "author_id": 1,
-        "value": "John Doe",
-        "label": "John Doe"
-    },
-    {
-        "author_id": 2,
-        "value": "Jane Smith",
-        "label": "Jane Smith"
-    },
-    {
-        "author_id": 3,
-        "value": "Alice Johnson",
-        "label": "Alice Johnson"
-    },
-    {
-        "author_id": 4,
-        "value": "Bob Brown",
-        "label": "Bob Brown"
-    },
-    {
-        "author_id": 5,
-        "value": "Charlie Davis",
-        "label": "Charlie Davis"
-    }
-]
+{
+    "authors": [
+      {
+        "bookauthor_id":1,
+        "bookauthor_name": "Fyodor Dostoevsky"
+      },
+      {
+        "bookauthor_id":2,
+        "bookauthor_name": "Jane Austen"
+      },
+      {
+        "bookauthor_id":3,
+        "bookauthor_name": "Victor Hugo"
+      },
+      {
+        "bookauthor_id":4,
+        "bookauthor_name": "Charles Dickens"
+      },
+      {
+        "bookauthor_id":5,
+        "bookauthor_name": "Leo Tolstoy"
+      },
+      {
+        "bookauthor_id":6,
+        "bookauthor_name": "Franz Kafka"
+      },
+      {
+        "bookauthor_id":7,
+        "bookauthor_name": "George Orwell"
+      },
+      {
+        "bookauthor_id":8,
+        "bookauthor_name": "Gabriel García Márquez"
+      },
+      {
+        "bookauthor_id":9,
+        "bookauthor_name": "J.R.R. Tolkien"
+      },
+      {
+        "bookauthor_id":10,
+        "bookauthor_name": "Haruki Murakami"
+      }
+    ]
+  }
+  

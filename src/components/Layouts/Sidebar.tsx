@@ -96,14 +96,14 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'content-management' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                     <li>
-                                        <NavLink to="/icerik-yönetimi/roman/roman-incelemeleri">Roman İncelemeleri</NavLink>
+                                        <NavLink to="/icerik-yonetimi/roman/roman-incelemeleri">Roman İncelemeleri</NavLink>
                                         </li>
 
                                         <li>
-                                            <NavLink to="/roman-incelemesi-ekle">Roman Önerileri</NavLink>
+                                            <NavLink to="/icerik-yonetimi/roman/roman-onerileri">Roman Önerileri</NavLink>
                                         </li>
                                         <li>
-                                            <NavLink to="/roman-incelemesi-ekle">Roman Özetleri</NavLink>
+                                            <NavLink to="/icerik-yonetimi/roman/roman-ozetleri">Roman Özetleri</NavLink>
                                         </li>
                                     </ul>
                                 </AnimateHeight>

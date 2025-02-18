@@ -5,11 +5,17 @@ import ImageCropper from '../../ImageCropper/ImageCropper';
 import novelCategoryData from '../../../utils/novelCategoryData.json';
 import { TagsInput } from 'react-tag-input-component';
 import authorsData from '../../../utils/authorsData.json';
-import { doc, Timestamp } from 'firebase/firestore';
+import { collection, doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db, getDownloadURL, ref, storage, uploadBytes } from '../../../firebase';
-import Select, { SingleValue } from 'react-select';
+import Select, { SingleValue, ActionMeta } from 'react-select';
 import periodData from '../../../utils/periodData.json';
-
+import FancyBoxGallery from '../../FancyBoxGallery/FancyBoxGallery';
+import Swal from 'sweetalert2';
+interface AuthorOption {
+    value: string;
+    label: string;
+    author_id: number;
+}
 type Props = {
     placeholder?: string;
 };
@@ -55,49 +61,37 @@ interface Tag {
 const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
+    const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
     const [newNovelReview, setNewNovelReview] = useState({
-        novel_id: 0,
+        novel_reviewId: 0,
         novel_name: '',
         novel_headImage: '',
         novel_reviewTitle: '',
         novel_summaryInfo: '',
-        body: '',
         category_id: 176816,
         subCategory_id: 176801,
         subCategory_name: 'novelReview',
         author_id: '',
         status: 'pending',
-        tags: [],//gönderirken tags ekle yolla
-        url: '',
+        tags: [], //gönderirken tags ekle yolla
         bookauthor_id: '',
         bookauthor_name: '',
-        novel_recordedDate: Timestamp.now(),
+        novel_recordedDate:new Date(),
         comments: [],
         likes: 0,
         dislikes: 0,
+        url: '',
         view_count: 0,
-        createdAt: Timestamp.now(),
-        updatedAt: Timestamp.now(),
+        createdAt: new Date(),
+        updatedAt: new Date(),
         rating: 0,
         novel_bookCategory: [],
         period: '',
     });
 
-  
-
-   
-
-    const onAuthorChange = (selectedOption: SingleValue<{ value: string; label: string; author_id: number }>) => {
-        if (selectedOption) {
-            setNewNovelReview((prev: any) => ({
-                ...prev,
-                bookauthor_name: selectedOption.value,
-                bookauthor_id: selectedOption.author_id, // ID'yi kaydet
-            }));
-        }
-    };
+    const [fancyboxIsActive, setFancyboxIsActive] = useState(false);
 
     const config = useMemo(
         () => ({
@@ -123,6 +117,8 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         }),
         [placeholder]
     );
+
+    console.log(selectedImage);
 
     const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -153,95 +149,258 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
 
     const [tags, setTags] = useState<string[]>([]);
 
-    const onChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = e.target;
-   
-         if (name === 'novel_bookCategory') {
-            const selectedOptions = Array.from(e.target.selectedOptions, (option) => option.value);
-            setNewNovelReview((prev:any)=>({
+    const onSelectChange = (selectedOption: SingleValue<AuthorOption>, actionMeta: ActionMeta<AuthorOption>) => {
+        // Seçilen seçenek varsa
+        if (selectedOption) {
+            setNewNovelReview((prev: any) => ({
                 ...prev,
-                [name]: selectedOptions
-            }))
-        } 
-        else {
-            // Diğer inputlar için normal şekilde güncelleme yapılır
-            setNewNovelReview((prev:any) => ({
-                ...prev,
-                [name]: value,
-                tags: tags
+                bookauthor_name: selectedOption.value, // Seçilen yazarın adı
+                bookauthor_id: selectedOption.author_id, // Yazarın ID'si
             }));
         }
     };
 
-    const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        if (newNovelReview.novel_headImage) {
-            const post_id = Math.floor(100000 + Math.random() * 900000).toString();
-            const novelReviewRef = doc(db, 'novelReview', post_id);
-            setUploading(true);
-            const now = Timestamp.now();
-            let a, b, c;
+    const formattedAuthors = authorsData.authors.map((author) => ({
+        value: author.bookauthor_name, // label ve value olarak kullanacağımız değer
+        label: author.bookauthor_name, // label değeri
+        author_id: author.bookauthor_id, // Yazarın ID'si
+    }));
 
-            var lowerCasedTitle = newNovelReview.novel_name.trim().toLowerCase().split(' ').join('-');
-            var urledTitle = '';
-            const regex = /[^a-zA-Z0-9çğıİöşüÇĞIÖŞÜ-\s]/g;
+    const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+        const { name, value } = e.target;
 
-            const titleArray = () => {
-                for (let i = 1; i <= lowerCasedTitle.length; i++) {
-                    var englished = lowerCasedTitle.substring(0, i).replace(/ı/g, 'i').replace(/ğ/g, 'g').replace(/ü/g, 'u').replace(/ş/g, 's').replace(/ö/g, 'o').replace(/ç/g, 'c');
-                    urledTitle = englished.replace(regex, '');
-                }
-            };
-            titleArray();
-            try {
-                // b = await uploadImage(urledTitle);
-                setUploading(false);
-            } catch (e) {
-                console.log(e);
-                window.alert(e);
-            }
+        let newValue: string | string[] | boolean;
+
+        if (e.target instanceof HTMLSelectElement && e.target.multiple) {
+            // Eğer multiple select ise, seçili değerleri array olarak al
+            newValue = Array.from(e.target.selectedOptions, (option) => option.value);
+        } else if (e.target instanceof HTMLInputElement && e.target.type === 'checkbox') {
+            // Checkbox için checked değerini al
+            newValue = e.target.checked;
+        } else {
+            // Diğer inputlar için value al
+            newValue = value;
         }
+
+        setNewNovelReview((prev) => ({
+            ...prev,
+            [name]: newValue,
+        }));
     };
 
-    console.log(newNovelReview);
+
+    const formSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const post_id = Math.floor(100000 + Math.random() * 900000).toString();
+        const novelReviewRef = doc(db, 'novelReview', post_id);
+        setUploading(true);
+        let urledTitle = '';
+        const now = new Date();
+
+        const regex: RegExp = /[^a-zA-Z0-9çğıİöşüÇĞIÖŞÜ-\s]/g;
+
+        const createUrlTitle = (title: string) => {
+            const post_id = Math.floor(100000 + Math.random() * 900000).toString(); // Post id oluşturuluyor
+            const lowerCasedTitle = title.trim().toLowerCase().split(' ').join('-');  // Başlığı küçük harfe dönüştürüp, boşlukları tireye çevir
+            const englishedTitle = lowerCasedTitle
+                .replace(/ı/g, 'i')
+                .replace(/ğ/g, 'g')
+                .replace(/ü/g, 'u')
+                .replace(/ş/g, 's')
+                .replace(/ö/g, 'o')
+                .replace(/ç/g, 'c');  // Türkçe karakterleri İngilizce'ye dönüştür
+            
+            const urledTitle = englishedTitle.replace(regex, '');  // Regex ile geçersiz karakterleri kaldır
+            return { urledTitle, post_id };  // Her iki değeri döndürüyoruz
+        };
+
+        const finalUrlTitle = createUrlTitle(newNovelReview.novel_name);
+        try {
+            // b = await uploadImage(urledTitle);
+            await setDoc(novelReviewRef, {
+                ...newNovelReview,
+                url: finalUrlTitle, // URL'yi formdan alıp Firestore'a ekle
+                createdAt: now,
+                updatedAt: now,
+                tags: tags,
+                novel_reviewId:post_id
+            });
+
+            // Alt koleksiyon (reviewBody) ekleme
+            const reviewBodyRef = collection(novelReviewRef, 'reviewBody');
+            await setDoc(doc(reviewBodyRef), {
+                body: content,
+            });
+
+            Swal.fire({
+                title: 'Saved successfully',
+                text: 'Your novel review has been saved!',
+                icon: 'success',
+                padding: '2em',
+              });
+            setNewNovelReview({
+                novel_reviewId: 0,
+                novel_name: '',
+                novel_headImage: '',
+                novel_reviewTitle: '',
+                novel_summaryInfo: '',
+                category_id: 176816,
+                subCategory_id: 176801,
+                subCategory_name: 'novelReview',
+                author_id: '',
+                status: 'pending',
+                tags: [], //gönderirken tags ekle yolla
+                bookauthor_id: '',
+                bookauthor_name: '',
+                novel_recordedDate: new Date(),
+                comments: [],
+                likes: 0,
+                dislikes: 0,
+                url: '',
+                view_count: 0,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                rating: 0,
+                novel_bookCategory: [],
+                period: '',
+            });
+            setTags([])
+            setContent('');
+            setUploading(false);
+            // Başarılı işlem sonrası yapılacaklar
+            console.log('Novel review has been successfully submitted!');
+            setUploading(false);
+        } catch (e) {
+            console.log(e);
+            Swal.fire({
+                title: 'Error',
+                text: 'There was an error while saving your review.',
+                icon: 'error',
+                padding: '2em',
+              });
+        }
+    };
 
     return (
         <div className="panel ">
             <label className="text-lg text-center mx-auto block w-1/2">Roman İncelemesi</label>
-            <form className="form flex flex-row w-full  items-start gap-4 justify-between" onSubmit={formSubmit}>
-                <div className="flex flex-col justify-between gap-2 w-3/1">
-                    <label>İnceleme Başlığı</label>
-                    <input name="novel_reviewTitle" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_reviewTitle} />
-                    <label>Özet Bilgi</label>
-                    <input name="novel_summaryInfo" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_summaryInfo} />
-                    <label htmlFor="ctnSelect1">Kitap Yazarı</label>
-                    <Select isSearchable placeholder="Yazar seçiniz" onChange={onAuthorChange} options={authorsData} />
-                    <label htmlFor="ctnSelect2">Roman Dönemi</label>
-                    <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period" required value={newNovelReview.period}>
-                        <option>Dönem seçiniz</option>
-                        {periodData.periods.map((item: any, key: number) => (
-                            <>
-                                <option title={item.description} key={item.id}>
-                                    {item.name} {item.startYear} {item.endYear} {}
-                                </option>
-                            </>
-                        ))}
-                    </select>
-                    <div className="my-6">
-                        <label htmlFor="ctnFile">Roman Görseli</label>
-                        <input
-                            id="ctnFile"
-                            type="file"
-                            className="form-input file:py-2 file:px-4 w-60 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file-ml-5 file:text-white file:hover:bg-primary"
-                            required
-                            accept="image/*"
-                            name="novel_headImage"
-                            // onChange={handleFileChange}
-                            value={newNovelReview.novel_headImage}
-                        />
-                        {preview && <img id="previewImg" src={preview} alt="Image Preview" className="mt-4 w-32 h-32 object-cover" />}
+            <form className="form flex flex-col w-full mt-4  items-start gap-4  " onSubmit={formSubmit}>
+                <div className="flex flex-row w-full justify-between">
+                    <div className="flex flex-col justify-between gap-2 w-3/1">
+                        <label>İnceleme Başlığı</label>
+                        <input name="novel_reviewTitle" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_reviewTitle} />
+                        <label>Özet Bilgi</label>
+                        <input name="novel_summaryInfo" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_summaryInfo} />
+                        <label>Roman Adı</label>
+                        <input name="novel_name" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_name} />
+                        <label htmlFor="ctnSelect1">Kitap Yazarı</label>
+                        <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} />
+                        <label htmlFor="ctnSelect2">Roman Dönemi</label>
+                        <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period" required value={newNovelReview.period}>
+                            <option>Dönem seçiniz</option>
+                            {periodData.periods.map((item: any, key: number) => (
+                                <>
+                                    <option title={item.description} key={item.id}>
+                                        {item.name} {item.startYear} {item.endYear} {}
+                                    </option>
+                                </>
+                            ))}
+                        </select>
+                        <div className="my-6">
+                            {/* <label htmlFor="ctnFile">Roman Görseli</label>
+                            <FancyBoxGallery
+                                options={{
+                                    Carousel: {
+                                        infinite: false,
+                                        keyboard: true,
+                                        arrows: true,
+                                        buttons: ['zoom', 'close', 'share'],
+                                        caption: true,
+                                        startIndex: 0,
+                                        drag: true,
+                                      
+                                        image: {
+                                            width: 'auto',
+                                            height: 'auto',
+                                        },
+                                        toolbar: {
+                                            buttons: ['fullscreen', 'close'],
+                                        },
+                                        on: {
+                                            change: (event: any) => {
+                                                setSelectedImage(event.page);
+                                                console.log(event);
+                                                console.log('page', event.page);
+                                            },
+                                        },
+                                    },
+                                }}
+                            >
+                                <a data-fancybox="gallery" href="https://lipsum.app/id/60/1600x1200">
+                                    <img alt="" src="https://lipsum.app/id/60/200x150" width="200" height="150" />
+                                </a>
+                                <a data-fancybox="gallery" href="https://lipsum.app/id/61/1600x1200">
+                                    <img alt="" src="https://lipsum.app/id/61/200x150" width="200" height="150" />
+                                </a>
+                                <a data-fancybox="gallery" href="https://lipsum.app/id/62/1600x1200">
+                                    <img alt="" src="https://lipsum.app/id/62/200x150" width="200" height="150" />
+                                </a>
+                                <a data-fancybox="gallery" href="https://lipsum.app/id/63/1600x1200">
+                                    <img alt="" src="https://lipsum.app/id/63/200x150" width="200" height="150" />
+                                </a>
+                                <a data-fancybox="gallery" href="https://lipsum.app/id/64/1600x1200">
+                                    <img alt="" src="https://lipsum.app/id/64/200x150" width="200" height="150" />
+                                </a>
+                            </FancyBoxGallery> */}
+                            {/* <div>
+                                {selectedImage ? (
+                                    <div>
+                                        <h3>Seçilen Görsel</h3>
+                                        <img src={selectedImage} alt="Selected" />
+                                    </div>
+                                ) : (
+                                    <p>Bir görsel seçmediniz.</p>
+                                )}
+                            </div> */}
+                            {/* <input
+                                id="ctnFile"
+                                type="file"
+                                className="form-input file:py-2 file:px-4 w-60 file:border-0 file:font-semibold p-0 file:bg-primary/90 ltr:file:mr-5 rtl:file-ml-5 file:text-white file:hover:bg-primary"
+                                required
+                                accept="image/*"
+                                name="novel_headImage"
+                                // onChange={handleFileChange}
+                                value={newNovelReview.novel_headImage}
+                            />
+                            {preview && <img id="previewImg" src={preview} alt="Image Preview" className="mt-4 w-32 h-32 object-cover" />} */}
+                        </div>
                     </div>
 
+                    <div className="flex flex-col gap-2   w-2/6">
+                        <label htmlFor="ctnSelect1">Roman Kategorisi</label>
+                        <select name="novel_bookCategory" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
+                            <option>Kategori seçiniz...</option>
+                            {novelCategoryData.categories.map((item: novelCategoryType) => (
+                                <option value={item.name} key={item.id}>
+                                    {item.name}
+                                </option>
+                            ))}
+                        </select>
+                        <div className="flex flex-col  flex-wrap mt-4">
+                            <span>Seçilen Kategoriler</span>
+                            {Array.isArray(newNovelReview.novel_bookCategory) && newNovelReview.novel_bookCategory.length > 0
+                                ? newNovelReview.novel_bookCategory.map((item: any) => <span key={item}>{item}</span>)
+                                : ''}
+                        </div>
+                        <div className="w-full ">
+                            <label>Taglar</label>
+                            <TagsInput value={tags} onChange={setTags} name="fruits" placeHolder="Tag giriniz" />
+                        </div>
+                    </div>
+                </div>
+
+                <div>
                     <JoditEditor
                         ref={editor}
                         value={content}
@@ -252,30 +411,6 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                     <button type="submit" className="btn btn-success mt-6 w-20">
                         Kaydet
                     </button>
-                </div>
-
-                <div className="flex flex-col gap-8  justify-between  w-2/6">
-                    <div className="w-full ">
-                        <label htmlFor="ctnSelect1">Roman Kategorisi</label>
-                        <select name="novel_bookCategory" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
-                            <option>Kategori seçiniz...</option>
-                            {novelCategoryData.categories.map((item: novelCategoryType) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="flex flex-col flex-wrap mt-4">
-                            <span>Seçilen Kategoriler</span>
-                            {Array.isArray(newNovelReview.novel_bookCategory) && newNovelReview.novel_bookCategory.length > 0
-                                ? newNovelReview.novel_bookCategory.map((item: any) => <span key={item}>{item}</span>)
-                                : ''}
-                        </div>
-                    </div>
-                    <div className="w-full">
-                        <label>Taglar</label>
-                        <TagsInput value={tags} onChange={setTags} name="fruits" placeHolder="Tag giriniz" />
-                    </div>
                 </div>
             </form>
         </div>
