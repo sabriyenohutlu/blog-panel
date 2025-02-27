@@ -9,6 +9,9 @@ import { FcCancel } from 'react-icons/fc';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../../firebase';
 import Swal from 'sweetalert2';
+import Tippy from '@tippyjs/react';
+import '../../TippyTooltip/tippy.css';
+import { PiEye } from 'react-icons/pi';
 
 const NovelReviewTable = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -104,11 +107,11 @@ const NovelReviewTable = () => {
     };
 
     const statusTranslations: { [key: string]: string } = {
-        completed: 'Tamamlandı',
+        completed: 'Yayında',
         pending: 'Onay bekliyor',
-        inProgress: 'Devam Ediyor',
-        canceled: 'İptal Edildi',
-        default: 'Tamamlandı',
+        inProgress: 'Taslak Aşamasında',
+        canceled: 'Geri Alındı',
+        default: 'Onay bekliyor',
     };
 
     return (
@@ -126,6 +129,7 @@ const NovelReviewTable = () => {
                             <th>Yayınlanma Tarihi</th>
                             <th>Durum</th>
                             <th className="text-center">İşlemler</th>
+                            <th className="text-center">Sayfalar</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -147,16 +151,31 @@ const NovelReviewTable = () => {
                                         </div>
                                     </td>
                                     <td className="text-center">
-                                        <div className="flex flex-row justify-start gap-1">
-                                            <button onClick={(e: any) => approvalBtnClickHandler(e, data.novel_reviewId)} disabled={data.status === 'completed'}>
-                                                {data.status === 'completed' ? '' : <FcApproval size={24} />}
-                                            </button>
-                                            <button onClick={(e: any) => canceledBtnClickHandler(e, data.novel_reviewId)} disabled={data.status === 'canceled'}>
-                                                {data.status === 'canceled' ? '' : <FcCancel size={24} />}
-                                            </button>
-                                            <NavLink to={`/icerik-yonetimi/roman/roman-incelemesi-guncelle-${data.novel_reviewId}`}>
-                                                <BiEdit size={24} />
-                                            </NavLink>
+                                        <div className="flex flex-row justify-start gap-2">
+                                            <Tippy content="Yayınla" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <button onClick={(e: any) => approvalBtnClickHandler(e, data.novel_reviewId)} disabled={data.status === 'completed'}>
+                                                    {data.status === 'completed' ? '' : <FcApproval size={24} />}
+                                                </button>
+                                            </Tippy>
+                                            <Tippy content="Geri Al" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <button onClick={(e: any) => canceledBtnClickHandler(e, data.novel_reviewId)} disabled={data.status === 'canceled'}>
+                                                    {data.status === 'canceled' ? '' : <FcCancel size={24} />}
+                                                </button>
+                                            </Tippy>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className="flex flex-row justify-start gap-2">
+                                            <Tippy content="Detay" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <NavLink to={`/icerik-yonetimi/roman/roman-incelemesi-detay/${data.novel_reviewId}`}>
+                                                    <PiEye size={24} />
+                                                </NavLink>
+                                            </Tippy>
+                                            <Tippy content="Güncelle" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <NavLink to={`/icerik-yonetimi/roman/roman-incelemesi-guncelle/${data.novel_reviewId}`}>
+                                                    <BiEdit size={24} />
+                                                </NavLink>
+                                            </Tippy>
                                         </div>
                                     </td>
                                 </tr>

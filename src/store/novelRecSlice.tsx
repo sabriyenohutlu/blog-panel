@@ -1,12 +1,11 @@
+import {db} from "../firebase";
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { db } from '../firebase';
 import { collection, getDocs, orderBy, query } from 'firebase/firestore';
-
-type NovelReviewType = {
-    novel_reviewId: number;
+type NovelRecType = {
+    novel_recId: number;
     novel_name: string;
     novel_headImage: string;
-    novel_reviewTitle: string;
+    novel_recTitle: string;
     novel_summaryInfo: string;
     body: string;
     category_id: number;
@@ -27,46 +26,43 @@ type NovelReviewType = {
     updatedAt: any;
     rating: number;
     novel_bookCategory: string[]; // Array of category IDs
-    period: string;
+    themes: string[];
 };
-
-type NovelReviewState = {
-    reviews: NovelReviewType[]; // İnceleme verilerini tutan array
+type NovelRecState = {
+    recommendations: NovelRecType[]; // İnceleme verilerini tutan array
     loading: boolean; // Veri yükleme durumu
     error: string | null; // Hata durumu
 };
-
-const initialState: NovelReviewState = {
-    reviews: [],
+const initialState: NovelRecState = {
+    recommendations: [],
     loading: false,
     error: null,
 };
-
-export const fetchReviews = createAsyncThunk<
-    NovelReviewType[], // Başarı durumunda dönecek veri tipi
+export const fetchRec = createAsyncThunk<
+    NovelRecType[], // Başarı durumunda dönecek veri tipi
     void, // Parametre tipi (yoksa void)
     { rejectValue: string } // Hata durumunda dönecek değer tipi
->('reviews/fetchReviews', async (_, { rejectWithValue }) => {
+>('recommendations/fetchRec', async (_, { rejectWithValue }) => {
     try {
-        const reviewsCollection = collection(db, 'novelReview');
+        const reviewsCollection = collection(db, 'novelRecommendation');
         const q = query(reviewsCollection, orderBy('createdAt', 'desc')); // 'desc' ya da 'asc' sıralama yönü
         const querySnapshot = await getDocs(q);
 
         // Firestore'dan gelen veriyi mapleyerek `NovelReviewType[]` türüne dönüştür
-        const reviews: NovelReviewType[] = querySnapshot.docs.map((doc) => {
+        const recommendations: NovelRecType[] = querySnapshot.docs.map((doc) => {
             const data = doc.data();
             return {
-                novel_reviewId: data.novel_reviewId,
+                novel_recId: data.novel_recId,
                 novel_name: data.novel_name,
                 novel_headImage: data.novel_headImage,
-                novel_reviewTitle: data.novel_reviewTitle,
+                novel_recTitle: data.novel_recTitle,
                 novel_summaryInfo: data.novel_summaryInfo,
                 category_id: data.category_id,
                 subCategory_id: data.subCategory_id,
+                body: data.body,
                 subCategory_name: data.subCategory_name,
                 author_id: data.author_id,
                 status: data.status,
-                body: data.body,
                 tags: data.tags,
                 bookauthor_id: data.bookauthor_id,
                 bookauthor_name: data.bookauthor_name,
@@ -80,36 +76,34 @@ export const fetchReviews = createAsyncThunk<
                 updatedAt: data.updatedAt,
                 rating: data.rating,
                 novel_bookCategory: data.novel_bookCategory, // Gerekirse daha spesifik bir tip verebilirsiniz
-                period: data.period,
+                themes: data.themes,
             };
         });
 
-        return reviews; // Veri döndürülüyor
+        return recommendations; // Veri döndürülüyor
     } catch (error) {
         return rejectWithValue('novel review Veri çekme hatası');
     }
 });
 
-const novelReviewSlice = createSlice({
-    name: 'novelReview', // Slice adı
+const novelRecSlice = createSlice({
+    name: 'novelRecommendation', // Slice adı
     initialState,
     reducers: {},
     extraReducers: (builder) => {
         // `fetchReviews` işleminin başarı durumunda:
-        builder.addCase(fetchReviews.pending, (state) => {
+        builder.addCase(fetchRec.pending, (state) => {
             state.loading = true;
         });
-        builder.addCase(fetchReviews.fulfilled, (state, action) => {
+        builder.addCase(fetchRec.fulfilled, (state, action) => {
             state.loading = false;
-            state.reviews = action.payload;
+            state.recommendations = action.payload;
         });
         // `fetchReviews` işleminin hata durumunda:
-        builder.addCase(fetchReviews.rejected, (state, action) => {
+        builder.addCase(fetchRec.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload as string;
         });
     },
 });
-
-// Reducer
-export default novelReviewSlice.reducer;
+export default novelRecSlice.reducer;

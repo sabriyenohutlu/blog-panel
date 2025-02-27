@@ -1,0 +1,45 @@
+/* tippy.css */
+
+/* Tooltip genel stili */
+.tippy-box {
+    position: relative;
+    background-color: #333;
+    color: white;
+    border-radius: 4px;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.4;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+/* Tooltip ok stili */
+.tippy-arrow {
+    width: 8px;
+    height: 8px;
+    position: absolute;
+    background: inherit;
+    transform: rotate(45deg);
+    z-index: -1;
+}
+
+/* Fade animasyonu */
+[data-animation='fade'][data-state='hidden'] {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+
+[data-animation='fade'][data-state='visible'] {
+    opacity: 1;
+    transition: opacity 0.2s ease;
+}
+
+/* Light tema */
+.tippy-box[data-theme~='light'] {
+    background-color: #fff;
+    color: #333;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

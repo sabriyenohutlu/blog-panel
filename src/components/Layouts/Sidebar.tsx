@@ -102,9 +102,9 @@ const Sidebar = () => {
                                         <li>
                                             <NavLink to="/icerik-yonetimi/roman/roman-onerileri">Roman Önerileri</NavLink>
                                         </li>
-                                        <li>
+                                        {/* <li>
                                             <NavLink to="/icerik-yonetimi/roman/roman-ozetleri">Roman Özetleri</NavLink>
-                                        </li>
+                                        </li> */}
                                     </ul>
                                 </AnimateHeight>
                             </li>
@@ -118,7 +118,7 @@ const Sidebar = () => {
                                             <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
                                         </svg>
                                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                                            <NavLink to={'/hikaye'}>Hikaye</NavLink>
+                                            <NavLink to={'/icerik-yonetimi/hikaye'}>Hikaye</NavLink>
                                         </span>
                                     </div>
 
@@ -131,7 +131,7 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'story' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                         <li>
-                                        <NavLink to="/roman-incelemesi-ekle">Hikayeler</NavLink>
+                                        <NavLink to="/icerik-yonetimi/hikaye/hikayeler">Hikayeler</NavLink>
                                         </li>
                                     </ul>
                                 </AnimateHeight>
