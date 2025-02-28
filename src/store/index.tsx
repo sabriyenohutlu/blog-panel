@@ -3,12 +3,16 @@ import themeConfigSlice from './themeConfigSlice';
 import novelReviewReducer from "./novelReviewSlice";
 import novelRecReducer from "./novelRecSlice";
 import storyReducer from "./storySlice";
+import biographyReducer from "./biographySlice";
+import poetryReducer from "./poetrySlice";
 
 const rootReducer = combineReducers({
     themeConfig: themeConfigSlice,
     novelReview: novelReviewReducer,
     novelRec: novelRecReducer,
-    story: storyReducer
+    story: storyReducer,
+    biography: biographyReducer,
+    poetry: poetryReducer
     
 });
 

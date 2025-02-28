@@ -16,6 +16,8 @@ import StoryDetailPage from '../pages/StoryDetailPage';
 import PoetryPage from '../pages/PoetryPage';
 import PoetryDetailPage from "../pages/PoetryDetailPage";
 import AddPoetryPage from '../pages/AddPoetryPage';
+import BiographyPage from '../pages/BiographyPage';
+import AddBiographyPage from '../pages/AddBiographyPage';
 const Index = lazy(() => import('../pages/Index'));
 
 const routes = [
@@ -115,6 +117,16 @@ const routes = [
         element: <PoetryDetailPage />,
         layout: 'default',
     },
+    {
+        path:"/icerik-yonetimi/biyografi/biyografiler",
+        element: <BiographyPage/>,
+        layout: "default"
+    },
+    {
+        path:"/icerik-yonetimi/biyografi/biyografi-ekle",
+        element:<AddBiographyPage/>,
+        layout:"default"
+    }
 ];
 
 export { routes };

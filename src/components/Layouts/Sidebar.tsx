@@ -159,7 +159,7 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'poem' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                         <li>
-                                        <NavLink to="/roman-incelemesi-ekle">Şiirler</NavLink>
+                                        <NavLink to="/icerik-yonetimi/siir/siirler">Şiirler</NavLink>
                                         </li>
                                     </ul>
                                 </AnimateHeight>
@@ -174,7 +174,7 @@ const Sidebar = () => {
                                             <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
                                         </svg>
                                         <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
-                                            <NavLink to={'/biography'}>Biyografi</NavLink>
+                                            <NavLink to={'/icerik-yonetimi/biyografi/biyografiler'}>Biyografi</NavLink>
                                         </span>
                                     </div>
 
@@ -187,7 +187,7 @@ const Sidebar = () => {
                                 <AnimateHeight duration={300} height={currentMenu === 'biography' ? 'auto' : 0}>
                                     <ul className="sub-menu text-gray-500">
                                         <li>
-                                        <NavLink to="/biyografiler">Biyografiler</NavLink>
+                                        <NavLink to='/icerik-yonetimi/biyografi/biyografiler'>Biyografiler</NavLink>
                                         </li>
                                     </ul>
                                 </AnimateHeight>

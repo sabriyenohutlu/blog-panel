@@ -1,0 +1,16 @@
+{
+    "categories": [
+        {
+            "id": 1,
+            "name": "Tarihî Kişilikler"
+        },
+        {
+            "id": 2,
+            "name": "Şairler"
+        },
+        {
+            "id": 3,
+            "name": "Yazarlar "
+        }
+    ]
+}
