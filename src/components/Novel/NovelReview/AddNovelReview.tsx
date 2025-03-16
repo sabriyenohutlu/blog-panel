@@ -45,6 +45,7 @@ type NewNovelReviewType = {
     comments: string[];
     likes: number;
     dislikes: number;
+    subCategory_title:string;
     view_count: number;
     createdAt: any;
     updatedAt: any;
@@ -73,6 +74,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         category_id: 176816,
         subCategory_id: 176801,
         subCategory_name: 'novelReview',
+        subCategory_title: 'roman-incelemesi',
         author_id: '',
         status: 'pending',
         tags: [], //gönderirken tags ekle yolla
@@ -240,6 +242,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 novel_reviewTitle: '',
                 novel_summaryInfo: '',
                 category_id: 176816,
+                subCategory_title:"roman-incelemesi",
                 subCategory_id: 176801,
                 subCategory_name: 'novelReview',
                 author_id: '',

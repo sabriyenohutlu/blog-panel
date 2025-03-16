@@ -5,6 +5,8 @@ import novelRecReducer from "./novelRecSlice";
 import storyReducer from "./storySlice";
 import biographyReducer from "./biographySlice";
 import poetryReducer from "./poetrySlice";
+import dailyWordReducer from "./dailyWordSlice";
+import userReducer from "./userSlice";
 
 const rootReducer = combineReducers({
     themeConfig: themeConfigSlice,
@@ -12,7 +14,9 @@ const rootReducer = combineReducers({
     novelRec: novelRecReducer,
     story: storyReducer,
     biography: biographyReducer,
-    poetry: poetryReducer
+    poetry: poetryReducer,
+    dailyWord : dailyWordReducer,
+    user: userReducer
     
 });
 

@@ -192,8 +192,151 @@ const Sidebar = () => {
                                     </ul>
                                 </AnimateHeight>
                             </li>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'dailyWord' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dailyWord')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/icerik-yonetimi/gunluk-soz/gunluk-sozler'}>Günlük Söz</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'biography' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <AnimateHeight duration={300} height={currentMenu === 'dailyWord' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                        <NavLink to='/icerik-yonetimi/gunluk-soz/gunluk-sozler'>Günlük Sözler</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'blog' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('blog')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/icerik-yonetimi/blog/blog-yazilari'}>Blog</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'blog' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <AnimateHeight duration={300} height={currentMenu === 'blog' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                        <NavLink to='/icerik-yonetimi/blog/blog-yazilari'>Blog</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
                             <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
-                                <span>{t('Kullanıcı Yönetimi')}</span>
+                                <span>{t('Tanımlamalar')}</span>
+                            </h2>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'addAuthor' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('addAuthor')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/tanimlamalar/yazar-ekle'}>Yazar</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'addAuthor' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <AnimateHeight duration={300} height={currentMenu === 'addAuthor' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                        <NavLink to='/tanimlamalar/yazar-ekle'>Yazar Ekle</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'addPeriod' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('addPeriod')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/tanimlamalar/donem-ekle'}>Dönem</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'addPeriod' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <AnimateHeight duration={300} height={currentMenu === 'addPeriod' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                        <NavLink to='/tanimlamalar/donem-ekle'>Dönem Ekle</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'addCategory' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('addCategory')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/tanimlamalar/kategori-ekle'}>Kategori</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'addCategory' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+                                <AnimateHeight duration={300} height={currentMenu === 'addCategory' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                        <NavLink to='/tanimlamalar/kategori-ekle'>Kategori Ekle</NavLink>
+                                        </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+                            <h2 className="py-3 px-7 flex items-center uppercase font-extrabold bg-white-light/30 dark:bg-dark dark:bg-opacity-[0.08] -mx-4 mb-1">
+                                <span>{t('Yönetim')}</span>
                             </h2>
                             <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'user-management' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('user-management')}>
@@ -224,6 +367,36 @@ const Sidebar = () => {
                                         <li>
                                             <NavLink to="/roman-incelemeleri">Yetkiler</NavLink>
                                         </li>
+                                    </ul>
+                                </AnimateHeight>
+                            </li>
+                            <li className="menu nav-item">
+                                <button type="button" className={`${currentMenu === 'comment-management' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('comment-management')}>
+                                    <div className="flex items-center">
+                                        <svg className="group-hover:!text-primary shrink-0" width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <circle opacity="0.5" cx="15" cy="6" r="3" fill="currentColor" />
+                                            <ellipse opacity="0.5" cx="16" cy="17" rx="5" ry="3" fill="currentColor" />
+                                            <circle cx="9.00098" cy="6" r="4" fill="currentColor" />
+                                            <ellipse cx="9.00098" cy="17.001" rx="7" ry="4" fill="currentColor" />
+                                        </svg>
+                                        <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">
+                                            <NavLink to={'/yorum-yonetimi'}>Yorum Yönetimi</NavLink>
+                                        </span>
+                                    </div>
+
+                                    <div className={currentMenu === 'comment-management' ? 'rotate-90' : 'rtl:rotate-180'}>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M9 5L15 12L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                                        </svg>
+                                    </div>
+                                </button>
+
+                                <AnimateHeight duration={300} height={currentMenu === 'comment-management' ? 'auto' : 0}>
+                                    <ul className="sub-menu text-gray-500">
+                                        <li>
+                                            <NavLink to="/roman-incelemeleri">Yorumlar</NavLink>
+                                        </li>
+                                      
                                     </ul>
                                 </AnimateHeight>
                             </li>

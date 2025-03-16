@@ -41,6 +41,13 @@
             "startYear": 1950,
             "endYear": 2000,
             "description": "A broad movement that developed in the mid- to late-20th century, characterized by a skeptical, critical approach to traditional narratives and ideologies."
+        },
+        {
+            "id":7,
+            "name":"20. yüzyıl, 1960'lar",
+            "startYear":"1900",
+            "endYear":"2000",
+            "description":""
         }
     ]
 }

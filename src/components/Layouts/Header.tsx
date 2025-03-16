@@ -1,13 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { IRootState } from '../../store';
+import { AppDispatch, IRootState } from '../../store';
 import { toggleRTL, toggleTheme,toggleSidebar } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import Dropdown from '../Dropdown';
-
+import { signOut  } from "firebase/auth";
+import { auth} from "../../firebase";
+import {UserCredential} from "firebase/auth";
 const Header = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const userData = useSelector((state: IRootState) => state.user.user);
+
+    console.log(userData)
+
     const location = useLocation();
     useEffect(() => {
         const selector = document.querySelector('ul.horizontal-menu a[href="' + window.location.pathname + '"]');
@@ -29,11 +36,21 @@ const Header = () => {
             }
         }
     }, [location]);
+    
+
+    const logOut = async (): Promise<void> => {
+        try {
+          await signOut(auth);
+          console.log("Kullanıcı çıkış yaptı.");
+        } catch (error) {
+          console.error("Çıkış hatası:", (error as Error).message);
+        }
+      };
+
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const dispatch = useDispatch();
 
     function createMarkup(messages: any) {
         return { __html: messages };
@@ -607,7 +624,7 @@ const Header = () => {
                                             Lock Screen
                                         </Link>
                                     </li>
-                                    <li className="border-t border-white-light dark:border-white-light/10">
+                                    <li className="border-t border-white-light dark:border-white-light/10" onClick={logOut}>
                                         <Link to="/auth/boxed-signin" className="text-danger !py-3">
                                             <svg className="ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path
@@ -619,7 +636,7 @@ const Header = () => {
                                                 />
                                                 <path d="M12 15L12 2M12 2L15 5.5M12 2L9 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                                             </svg>
-                                            Sign Out
+                                            Çıkış Yap
                                         </Link>
                                     </li>
                                 </ul>

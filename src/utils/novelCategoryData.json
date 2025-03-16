@@ -134,6 +134,16 @@
             "id": 27,
             "name": "Distopya",
             "description": "Books that are based on factual information."
+        },
+        {
+            "id":28,
+            "name":"Latin Amerikan Edebiyatı",
+            "description":""
+        },
+        {
+            "id":29,
+            "name":" Büyülü Gerçekçilik",
+            "description":""
         }
     ]
 }

@@ -239,7 +239,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
             });
         }
     };
-    console.log(newStory);
+
     return (
         <div className="panel ">
             <label className="text-lg text-center mx-auto block w-1/2">Hikaye Ekle</label>

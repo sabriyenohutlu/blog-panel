@@ -1,0 +1,48 @@
+{
+    "categories": [
+        {
+            "value": 1,
+            "label": "Motivasyon"
+        },
+        {
+            "value": 2,
+            "label": "Başarı"
+        },
+        {
+            "value": 3,
+            "label": "Aşk"
+        },
+        {
+            "value": 4,
+            "label": "Bilgelik"
+        },
+        {
+            "value": 5,
+            "label": "Mutluluk"
+        },
+        {
+            "value": 6,
+            "label": "Dostluk"
+        },
+        {
+            "value": 7,
+            "label": "Sabır"
+        },
+        {
+            "value": 8,
+            "label": "Hayat"
+        },
+        {
+            "value": 9,
+            "label": "Felsefi"
+        },
+        {
+            "value": 10,
+            "label": "Liderlik"
+        },
+        {
+            "value": 11,
+            "label": "Edebiyat"
+        }
+    ]
+}

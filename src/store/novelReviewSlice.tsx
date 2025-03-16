@@ -14,6 +14,7 @@ type NovelReviewType = {
     subCategory_name: string;
     author_id: string;
     status: string;
+    subCategory_title: string;
     tags: string[];
     url: string;
     bookauthor_id: string;
@@ -59,6 +60,7 @@ export const fetchReviews = createAsyncThunk<
                 novel_reviewId: data.novel_reviewId,
                 novel_name: data.novel_name,
                 novel_headImage: data.novel_headImage,
+                subCategory_title: data.subCategory_title,
                 novel_reviewTitle: data.novel_reviewTitle,
                 novel_summaryInfo: data.novel_summaryInfo,
                 category_id: data.category_id,

@@ -276,6 +276,7 @@ const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>,status:string) 
                                 </option>
                             ))}
                         </select>
+                        
                         <div className="flex flex-col  flex-wrap mt-4">
                             <span>Seçilen Kategoriler</span>
                             {Array.isArray(newNovelRec.novel_bookCategory) && newNovelRec.novel_bookCategory.length > 0

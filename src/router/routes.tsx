@@ -14,10 +14,20 @@ import AddStoryPage from '../pages/AddStoryPage';
 import StoryPage from '../pages/StoryPage';
 import StoryDetailPage from '../pages/StoryDetailPage';
 import PoetryPage from '../pages/PoetryPage';
-import PoetryDetailPage from "../pages/PoetryDetailPage";
+import PoetryDetailPage from '../pages/PoetryDetailPage';
 import AddPoetryPage from '../pages/AddPoetryPage';
 import BiographyPage from '../pages/BiographyPage';
 import AddBiographyPage from '../pages/AddBiographyPage';
+import AddDailyWordPage from '../pages/AddDailyWordPage';
+import DailyWordPage from '../pages/DailyWordPage';
+import AddBlogPage from '../pages/AddBlogPage';
+import BlogPage from '../pages/BlogPage';
+import LoginBoxed from '../pages/Authentication/LoginBoxed';
+import RegisterBoxed from '../pages/Authentication/RegisterBoxed';
+import UnlockCover from '../pages/Authentication/UnlockCover';
+import RecoverIdCover from '../pages/Authentication/RecoverIdCover';
+import RecoverIdBox from '../pages/Authentication/RecoverIdBox';
+import UnlockBox from '../pages/Authentication/UnlockBox';
 const Index = lazy(() => import('../pages/Index'));
 
 const routes = [
@@ -118,15 +128,75 @@ const routes = [
         layout: 'default',
     },
     {
-        path:"/icerik-yonetimi/biyografi/biyografiler",
-        element: <BiographyPage/>,
-        layout: "default"
+        path: '/icerik-yonetimi/biyografi/biyografiler',
+        element: <BiographyPage />,
+        layout: 'default',
     },
     {
-        path:"/icerik-yonetimi/biyografi/biyografi-ekle",
-        element:<AddBiographyPage/>,
-        layout:"default"
-    }
+        path: '/icerik-yonetimi/biyografi/biyografi-ekle',
+        element: <AddBiographyPage />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yonetimi/gunluk-soz/gunluk-soz-ekle',
+        element: <AddDailyWordPage />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yonetimi/gunluk-soz/gunluk-sozler',
+        element: <DailyWordPage />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik*yonetimi/blog/blog-yazilari',
+        element: <BlogPage />,
+        layout: 'default',
+    },
+    {
+        path: '/icerik-yonetimi/blog/blog-yazi-ekle',
+        element: <AddBlogPage />,
+        layout: 'default',
+    },
+    {
+        path: '/auth/boxed-signin',
+        element: <LoginBoxed />,
+        layout: 'blank',
+    },
+    {
+        path: '/auth/boxed-signup',
+        element: <RegisterBoxed />,
+        layout: 'blank',
+    },
+    {
+        path: '/auth/boxed-lockscreen',
+        element: <UnlockBox />,
+        layout: 'blank',
+    },
+    {
+        path: '/auth/boxed-password-reset',
+        element: <RecoverIdBox />,
+        layout: 'blank',
+    },
+    // {
+    //     path: '/auth/cover-login',
+    //     element: <LoginCover />,
+    //     layout: 'blank',
+    // },
+    // {
+    //     path: '/auth/cover-register',
+    //     element: <RegisterCover />,
+    //     layout: 'blank',
+    // },
+    {
+        path: '/auth/cover-lockscreen',
+        element: <UnlockCover />,
+        layout: 'blank',
+    },
+    {
+        path: '/auth/cover-password-reset',
+        element: <RecoverIdCover />,
+        layout: 'blank',
+    },
 ];
 
 export { routes };
