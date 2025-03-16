@@ -1,6 +1,6 @@
 import authorsData from '../../utils/authorsData.json';
 const AuthorsTable = () => {
-    const authorsList = authorsData.map((item: any, index: number) => (
+    const authorsList = authorsData.authors.map((item: any, index: number) => (
         <tr key={index} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200">
             <td className="px-6 py-4"> {item.author_id}</td>
             <td className="px-6 py-4">{item.author_name}</td>
