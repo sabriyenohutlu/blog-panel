@@ -11,6 +11,8 @@ import periodData from '../../utils/periodData.json';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
 import biographyCategoryData from '../../utils/biographyCategoryData.json';
+import { useSelector } from 'react-redux';
+import { IRootState } from "../../store";
 interface AuthorOption {
     value: string;
     label: string;
@@ -63,6 +65,7 @@ type Props = {
 const AddBiography: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
+    const user = useSelector((state: IRootState) => state.user);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -189,6 +192,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 biography_id: post_id,
                 status: status,
+                author_id: user?.user?.uid ||null
             });
 
             // Alt koleksiyon (reviewBody) ekleme

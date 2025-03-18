@@ -12,8 +12,8 @@ import IconInstagram from '../../components/Icon/IconInstagram';
 import IconFacebookCircle from '../../components/Icon/IconFacebookCircle';
 import IconTwitter from '../../components/Icon/IconTwitter';
 import IconGoogle from '../../components/Icon/IconGoogle';
-import { signInWithEmailAndPassword, UserCredential } from "firebase/auth";
-import { auth } from "../../firebase";
+import { signInWithEmailAndPassword, UserCredential } from 'firebase/auth';
+import { auth } from '../../firebase';
 
 const LoginBoxed = () => {
     const [user, setUser] = useState({
@@ -25,24 +25,31 @@ const LoginBoxed = () => {
     const navigate = useNavigate();
     const isDark = useSelector((state: IRootState) => state.themeConfig.theme === 'dark' || state.themeConfig.isDarkMode);
 
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setUser({
+            ...user,
+            [e.target.name]: e.target.value,
+        });
+    };
+
     const loginUser = async (email: string, password: string): Promise<UserCredential | void> => {
         try {
-          const userCredential = await signInWithEmailAndPassword(auth, email, password);
-          console.log("Kullanıcı giriş yaptı:", userCredential.user);
-          return userCredential;
+            const userCredential = await signInWithEmailAndPassword(auth, email, password);
+            console.log('Kullanıcı giriş yaptı:', userCredential.user);
+            return userCredential;
         } catch (error) {
-          console.error("Giriş hatası:", (error as Error).message);
+            console.error('Giriş hatası:', (error as Error).message);
         }
-      };
+    };
 
-    const submitForm = (e:any) => {
-        e.preventDefault()
-        loginUser(user.email, user.password
-        ).then(() => {
+    const submitForm = async (e: any) => {
+        e.preventDefault();
+        try {
+            await loginUser(user.email, user.password);
             navigate('/');
-        }).catch((e) => {
-            console.log(e);
-        })
+        } catch (error) {
+            console.error('Giriş işlemi başarısız oldu:', error);
+        }
     };
 
     return (
@@ -58,34 +65,33 @@ const LoginBoxed = () => {
                 <img src="/assets/images/auth/polygon-object.svg" alt="image" className="absolute bottom-0 end-[28%]" />
                 <div className="relative w-full max-w-[870px] rounded-md bg-[linear-gradient(45deg,#fff9f9_0%,rgba(255,255,255,0)_25%,rgba(255,255,255,0)_75%,_#fff9f9_100%)] p-2 dark:bg-[linear-gradient(52.22deg,#0E1726_0%,rgba(14,23,38,0)_18.66%,rgba(14,23,38,0)_51.04%,rgba(14,23,38,0)_80.07%,#0E1726_100%)]">
                     <div className="relative flex flex-col justify-center rounded-md bg-white/60 backdrop-blur-lg dark:bg-black/50 px-6 lg:min-h-[758px] py-20">
-                      
                         <div className="mx-auto w-full max-w-[440px]">
                             <div className="mb-10">
-                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Sign in</h1>
-                                <p className="text-base font-bold leading-normal text-white-dark">Enter your email and password to login</p>
+                                <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Giriş Yap</h1>
+                                <p className="text-base font-bold leading-normal text-white-dark">Email ve şifre giriniz</p>
                             </div>
                             <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
                                 <div>
-                                    <label htmlFor="email">Email</label>
+                                    <label htmlFor="email">Mail</label>
                                     <div className="relative text-white-dark">
-                                        <input id="email" type="email" placeholder="Enter Email" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="email" type="email" placeholder="Enter Email" name='email' value={user.email} onChange={handleChange}  className="form-input ps-10 placeholder:text-white-dark" />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconMail fill={true} />
                                         </span>
                                     </div>
                                 </div>
                                 <div>
-                                    <label htmlFor="password">Password</label>
+                                    <label htmlFor="password">Şifre</label>
                                     <div className="relative text-white-dark">
-                                        <input id="Passpasswordword" type="password" placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
+                                        <input id="Passpasswordword" type="password" name='password' onChange={handleChange} value={user.password}  placeholder="Enter Password" className="form-input ps-10 placeholder:text-white-dark" />
                                         <span className="absolute start-4 top-1/2 -translate-y-1/2">
                                             <IconLockDots fill={true} />
                                         </span>
                                     </div>
                                 </div>
-                           
+
                                 <button type="submit" className="btn btn-gradient !mt-6 w-full border-0 uppercase shadow-[0_10px_20px_-10px_rgba(67,97,238,0.44)]">
-                                 Giriş Yap
+                                    Giriş Yap
                                 </button>
                             </form>
                             <div className="relative my-7 text-center md:mb-9">
@@ -106,9 +112,9 @@ const LoginBoxed = () => {
                                 </ul>
                             </div>
                             <div className="text-center dark:text-white">
-                               Bir hesabın yok mu?&nbsp;
+                                Bir hesabın yok mu?&nbsp;
                                 <Link to="/auth/boxed-signup" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
-                                   Kayıt Ol
+                                    Kayıt Ol
                                 </Link>
                             </div>
                         </div>

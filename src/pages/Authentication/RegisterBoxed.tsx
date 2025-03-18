@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
@@ -18,7 +18,7 @@ const RegisterBoxed = () => {
         createdAt: new Date(),
     });
 
-    const navigate = useNavigate();
+      const location = useLocation();
     const [error, setError] = useState<string | null>(null);
 
     const onChange = (e: any) => {
@@ -85,7 +85,7 @@ const RegisterBoxed = () => {
 
         // 5️⃣ Kullanıcı başarılı şekilde kayıt olduysa yönlendirme
         console.log('Kayıt işlemi tamamlandı, yönlendirme yapılıyor...');
-        navigate('/');
+   
     };
 
     console.log(user);
@@ -167,7 +167,7 @@ const RegisterBoxed = () => {
                             </div>
                             <div className="text-center dark:text-white">
                                 Bir hesabın var mı ?&nbsp;
-                                <Link to="/auth/boxed-signin" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
+                                <Link to="/" className="uppercase text-primary underline transition hover:text-black dark:hover:text-white">
                                     Giriş Yap
                                 </Link>
                             </div>

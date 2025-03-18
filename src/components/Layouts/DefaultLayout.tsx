@@ -46,7 +46,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
     }, []);
 
     return (
-        <App>
+       <>
             {/* BEGIN MAIN CONTAINER */}
             <div className="relative">
                 {/* sidebar menu overlay */}
@@ -101,7 +101,7 @@ const DefaultLayout = ({ children }: PropsWithChildren) => {
                     </div>
                 </div>
             </div>
-        </App>
+            </>
     );
 };
 

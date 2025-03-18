@@ -253,7 +253,7 @@ const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>,status:string) 
             <label className="text-lg text-center mx-auto block w-1/2">Roman Önerisi</label>
             <form className="form flex flex-col w-full mt-4  items-start gap-4  ">
                 <div className="flex flex-row w-full justify-between">
-                    <div className="flex flex-col justify-between gap-2 w-3/1">
+                    <div className="flex flex-col justify-between gap-2 w-1/3">
                         <label>Öneri Başlığı</label>
                         <input name="novel_recTitle" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelRec.novel_recTitle} />
                         <label>Özet Bilgi</label>

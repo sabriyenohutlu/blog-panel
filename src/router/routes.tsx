@@ -28,175 +28,149 @@ import UnlockCover from '../pages/Authentication/UnlockCover';
 import RecoverIdCover from '../pages/Authentication/RecoverIdCover';
 import RecoverIdBox from '../pages/Authentication/RecoverIdBox';
 import UnlockBox from '../pages/Authentication/UnlockBox';
+import ProfilePage from '../pages/ProfilePage';
+import {RouteObject } from 'react-router-dom';
 const Index = lazy(() => import('../pages/Index'));
 
-const routes = [
-    // dashboard
+type RouteConfig = RouteObject & {
+    loader?: () => Promise<any>;
+    action?: () => void;
+};
+
+const authRoutes: RouteConfig[] = [
     {
         path: '/',
-        element: <Index />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi',
-        element: <ContentManagement />,
-        layout: 'default',
-    },
-    {
-        path: '/kullanici-yonetimi',
-        element: <UserManagement />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman',
-        element: <NovelReviewPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-incelemeleri',
-        element: <NovelReviewPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-incelemesi-ekle',
-        element: <AddNovelReviewPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-incelemesi-guncelle/:novel_reviewId',
-        element: <UpdateNovelReviewPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-incelemesi-detay/:novel_reviewId',
-        element: <NovelReviewDetailPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-onerisi-ekle',
-        element: <AddNovelRecommendationPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-onerisi-detay/:novel_recId',
-        element: <NovelRecommendationDetailPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-ozeti-ekle',
-        element: <AddNovelSummaryPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-ozetleri',
-        element: <NovelSummaryPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/roman/roman-onerileri',
-        element: <NovelRecommendationPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/hikaye/hikaye-ekle',
-        element: <AddStoryPage />,
-        layout: 'defalut',
-    },
-    {
-        path: '/icerik-yonetimi/hikaye/hikayeler',
-        element: <StoryPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/hikaye/hikaye-detay/:story_id',
-        element: <StoryDetailPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/siir/siirler',
-        element: <PoetryPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/siir/siir-ekle',
-        element: <AddPoetryPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/siir/siir-detay/:poetry_id',
-        element: <PoetryDetailPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/biyografi/biyografiler',
-        element: <BiographyPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/biyografi/biyografi-ekle',
-        element: <AddBiographyPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/gunluk-soz/gunluk-soz-ekle',
-        element: <AddDailyWordPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/gunluk-soz/gunluk-sozler',
-        element: <DailyWordPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik*yonetimi/blog/blog-yazilari',
-        element: <BlogPage />,
-        layout: 'default',
-    },
-    {
-        path: '/icerik-yonetimi/blog/blog-yazi-ekle',
-        element: <AddBlogPage />,
-        layout: 'default',
-    },
-    {
-        path: '/auth/boxed-signin',
-        element: <LoginBoxed />,
-        layout: 'blank',
+        element: <LoginBoxed />
     },
     {
         path: '/auth/boxed-signup',
-        element: <RegisterBoxed />,
-        layout: 'blank',
+        element: <RegisterBoxed />
     },
     {
         path: '/auth/boxed-lockscreen',
-        element: <UnlockBox />,
-        layout: 'blank',
+        element: <UnlockBox />
     },
     {
         path: '/auth/boxed-password-reset',
-        element: <RecoverIdBox />,
-        layout: 'blank',
+        element: <RecoverIdBox />
     },
-    // {
-    //     path: '/auth/cover-login',
-    //     element: <LoginCover />,
-    //     layout: 'blank',
-    // },
-    // {
-    //     path: '/auth/cover-register',
-    //     element: <RegisterCover />,
-    //     layout: 'blank',
-    // },
     {
         path: '/auth/cover-lockscreen',
-        element: <UnlockCover />,
-        layout: 'blank',
+        element: <UnlockCover />
     },
     {
         path: '/auth/cover-password-reset',
-        element: <RecoverIdCover />,
-        layout: 'blank',
+        element: <RecoverIdCover />
     },
 ];
 
-export { routes };
+const routes: RouteConfig[] = [
+    // dashboard
+    {
+        path: '/',
+        element: <Index />
+    },
+    {
+        path: '/icerik-yonetimi',
+        element: <ContentManagement />
+    },
+    {
+        path: '/kullanici-yonetimi',
+        element: <UserManagement />
+    },
+    {
+        path: '/icerik-yonetimi/roman',
+        element: <NovelReviewPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-incelemeleri',
+        element: <NovelReviewPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-incelemesi-ekle',
+        element: <AddNovelReviewPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-incelemesi-guncelle/:novel_reviewId',
+        element: <UpdateNovelReviewPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-incelemesi-detay/:novel_reviewId',
+        element: <NovelReviewDetailPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-onerisi-ekle',
+        element: <AddNovelRecommendationPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-onerisi-detay/:novel_recId',
+        element: <NovelRecommendationDetailPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-ozeti-ekle',
+        element: <AddNovelSummaryPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-ozetleri',
+        element: <NovelSummaryPage />
+    },
+    {
+        path: '/icerik-yonetimi/roman/roman-onerileri',
+        element: <NovelRecommendationPage />
+    },
+    {
+        path: '/icerik-yonetimi/hikaye/hikaye-ekle',
+        element: <AddStoryPage />
+    },
+    {
+        path: '/icerik-yonetimi/hikaye/hikayeler',
+        element: <StoryPage />
+    },
+    {
+        path: '/icerik-yonetimi/hikaye/hikaye-detay/:story_id',
+        element: <StoryDetailPage />
+    },
+    {
+        path: '/icerik-yonetimi/siir/siirler',
+        element: <PoetryPage />
+    },
+    {
+        path: '/icerik-yonetimi/siir/siir-ekle',
+        element: <AddPoetryPage />
+    },
+    {
+        path: '/icerik-yonetimi/siir/siir-detay/:poetry_id',
+        element: <PoetryDetailPage />
+    },
+    {
+        path: '/icerik-yonetimi/biyografi/biyografiler',
+        element: <BiographyPage />
+    },
+    {
+        path: '/icerik-yonetimi/biyografi/biyografi-ekle',
+        element: <AddBiographyPage />
+    },
+    {
+        path: '/icerik-yonetimi/gunluk-soz/gunluk-soz-ekle',
+        element: <AddDailyWordPage />
+    },
+    {
+        path: '/icerik-yonetimi/gunluk-soz/gunluk-sozler',
+        element: <DailyWordPage />
+    },
+    {
+        path: '/icerik-yonetimi/blog/blog-yazilari',
+        element: <BlogPage />,
+    },
+    {
+        path: '/icerik-yonetimi/blog/blog-yazi-ekle',
+        element: <AddBlogPage />
+    },
+
+    {
+        path: '/kullanici-yonetimi/profil',
+        element: <ProfilePage />
+    },
+];
+
+export { routes, authRoutes};

@@ -1,18 +1,34 @@
+import { deleteDoc, doc } from 'firebase/firestore';
 import BasicModal from '../../Modals/BasicModal';
 import { useState } from 'react';
 import Swal from 'sweetalert2';
+import { db } from '../../../firebase';
+import { useNavigate } from "react-router";
 const NovelReviewDetail: React.FC<any> = ({ novelReview, reviewBody }) => {
     const [open, setOpen] = useState(false);
+    const navigate = useNavigate();
+    const deleteReviewHandler = async(e: any) => {
 
-    const deleteReviewHandler = (e: any) => {
-        e.preventDefault();
+        try{
+            await deleteDoc(doc(db,"novelReview",novelReview.novel_reviewId))
+            console.log("Document successfully deleted!");
+            Swal.fire({
+                title: 'Silindi!',
+                text: 'Roman incelemesi başarıyla silindi.',
+                icon: 'success',
+                padding: '2em',
+            })
+            navigate("/icerik-yonetimi/roman/roman-onerileri")
+        } catch(error){
+            console.error("Error removing document: ", error);
+        }
         setOpen(!open);
     };
 
     return (
         <div className="panel ">
             <label className="text-lg text-center mx-auto block w-1/2">Roman İncelemesi</label>
-            <form className="form flex flex-col w-full mt-4  items-start gap-4  ">
+            <div className="form flex flex-col w-full mt-4  items-start gap-4  ">
                 <div className="flex flex-row w-full justify-between">
                     <div className="flex flex-col justify-between gap-2 w-3/1">
                         <label>İnceleme Başlığı</label>
@@ -52,7 +68,7 @@ const NovelReviewDetail: React.FC<any> = ({ novelReview, reviewBody }) => {
                         }}
                     ></p>
                 </div>
-                <button className="btn btn-danger" onClick={deleteReviewHandler}>
+                <button className="btn btn-danger"  onClick={() => setOpen(true)}>
                     İnceleme Yazısını Sil
                 </button>
                 {open && (
@@ -85,6 +101,7 @@ const NovelReviewDetail: React.FC<any> = ({ novelReview, reviewBody }) => {
                                         <button
                                             type="button"
                                             className="btn btn-danger ltr:ml-4 rtl:mr-4"
+                                            onClick={deleteReviewHandler}
                                             // onClick={toggleModal}
                                         >
                                             Sil
@@ -95,7 +112,7 @@ const NovelReviewDetail: React.FC<any> = ({ novelReview, reviewBody }) => {
                         </div>
                     </div>
                 )}
-            </form>
+            </div>
         </div>
     );
 };

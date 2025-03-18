@@ -120,8 +120,6 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         [placeholder]
     );
 
-    console.log(selectedImage);
-
     const uploadImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -294,7 +292,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                         <label htmlFor="ctnSelect1">Kitap Yazarı</label>
                         <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} />
                         <label htmlFor="ctnSelect2">Roman Dönemi</label>
-                        <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period" required value={newNovelReview.period}>
+                        <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period"  value={newNovelReview.period}>
                             <option>Dönem seçiniz</option>
                             {periodData.periods.map((item: any, key: number) => (
                                 <>

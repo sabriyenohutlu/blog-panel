@@ -12,12 +12,14 @@ import Tippy from '@tippyjs/react';
 import '../TippyTooltip/tippy.css';
 import { PiEye } from 'react-icons/pi';
 import {fetchBio} from "../../store/biographySlice";
+import { fetchUsers } from '../../store/userSlice';
 
 const BiographyTable = () => {
   const dispatch = useDispatch<AppDispatch>();
   const bioData = useSelector((state: IRootState) => state.biography.biographies);
   const loading = useSelector((state: IRootState) => state.biography.loading);
   const error = useSelector((state: IRootState) => state.biography.error);
+  const usersList = useSelector((state: IRootState) => state.user.usersList);
   useEffect(() => {
       dispatch(fetchBio());
   }, [dispatch]);
@@ -88,7 +90,10 @@ const statusTranslations: { [key: string]: string } = {
     default: 'Onay bekliyor',
 };
 
-console.log("bioData",bioData)
+const userTranslations = usersList?.reduce((acc:any, user:any) => {
+    acc[user?.userId] = user?.name;
+    return acc;
+  }, {});
 
   return (
     <div className="panel mt-6 flex flex-col gap-4">
@@ -116,7 +121,8 @@ console.log("bioData",bioData)
                                 <div className="whitespace-nowrap">{data.biography_title}</div>
                             </td>
                             <td>{data.bioOfWho}</td>
-                            <td>{data.author_id}</td>
+                            <td>{`${userTranslations[data.author_id] || ""} `}</td>
+                            
                             <td>
                                 <td>{new Date(data.createdAt.seconds * 1000).toLocaleString()}</td>
                             </td>
