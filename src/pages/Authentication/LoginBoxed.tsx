@@ -42,11 +42,11 @@ const LoginBoxed = () => {
         }
     };
 
-    const submitForm = async (e: any) => {
+    const submitForm = async (e: any,go:any) => {
         e.preventDefault();
         try {
             await loginUser(user.email, user.password);
-            navigate('/');
+            go()
         } catch (error) {
             console.error('Giriş işlemi başarısız oldu:', error);
         }
@@ -70,7 +70,7 @@ const LoginBoxed = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Giriş Yap</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Email ve şifre giriniz</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5 dark:text-white" onSubmit={(e)=>submitForm(e,()=>navigate("/"))}>
                                 <div>
                                     <label htmlFor="email">Mail</label>
                                     <div className="relative text-white-dark">

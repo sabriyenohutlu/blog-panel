@@ -2,13 +2,15 @@ import { onAuthStateChanged, signOut, User } from "firebase/auth";
 import { auth, db } from "../firebase";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppDispatch } from "store";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
+import { useEffect } from "react";
 export interface UserState {
     user: User | null;
     loading: boolean;
     error: string | null;
     uid: string | null;
     usersList: User[] | null;
+    userData:[] | null;
   }
   
   const initialState: UserState = {
@@ -16,7 +18,8 @@ export interface UserState {
     loading: false,
     error: null,
     uid: null,
-    usersList: null
+    usersList: null,
+    userData:[]
   };
 
 const userSlice = createSlice({
@@ -25,6 +28,9 @@ const userSlice = createSlice({
     reducers: {
         setUser: (state, action) => {
             state.user = action.payload;
+        },
+        setUserData:(state,action)=> {
+          state.userData = action.payload;
         },
         setUsersList: (state, action: PayloadAction<User[] | null>) => {
           state.usersList = action.payload;
@@ -37,7 +43,7 @@ const userSlice = createSlice({
           },
     },
 });
-export const { setUser, setLoading, setError,setUsersList  } = userSlice.actions;
+export const { setUser, setLoading, setError,setUsersList,setUserData  } = userSlice.actions;
 export default userSlice.reducer;
 
 export const fetchUsers = () => async (dispatch: AppDispatch) => {
@@ -56,27 +62,46 @@ export const fetchUsers = () => async (dispatch: AppDispatch) => {
     dispatch(setLoading(false));
   }
 };
-
 export const listenToAuthChanges = () => (dispatch: AppDispatch) => {
-  dispatch(setLoading(true)); // Yükleme durumu başlat
+  dispatch(setLoading(true));
 
-  onAuthStateChanged(auth, async(currentUser) => {
+  onAuthStateChanged(auth, async (currentUser) => {
     if (currentUser) {
       dispatch(setUser(currentUser));
-      localStorage.setItem("user", JSON.stringify(currentUser));
-      dispatch(setError(null));
+
+      const userRef = doc(db, "user", currentUser.uid);
+      try {
+        const docSnap = await getDoc(userRef);
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          dispatch(setUserData(userData)); // Redux store'a Firestore'daki user verisini ekle
+          localStorage.setItem("user", JSON.stringify(userData));
+        } else {
+          console.log("Kullanıcı bulunamadı.");
+          dispatch(setUserData(null));
+          localStorage.removeItem("user");
+        }
+      } catch (error: any) {
+        console.error("Firestore verisi alınırken hata oluştu:", error);
+        dispatch(setError(error.message));
+      }
     } else {
       dispatch(setUser(null));
+      dispatch(setUserData(null));
       localStorage.removeItem("user");
     }
-    dispatch(setLoading(false)); // Yükleme tamamlandı
+
+    dispatch(setLoading(false));
   });
 };
-export const logoutUser = () => async (dispatch: AppDispatch) => {
+
+export const logoutUser = (e:any,go:any) => async (dispatch: AppDispatch) => {
   try {
     await signOut(auth);
     dispatch(setUser(null));
+    go();
   } catch (error: any) {
     dispatch(setError(error.message));
+    console.log(error)
   }
 };

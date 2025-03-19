@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, NavLink, useLocation } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { AppDispatch, IRootState } from '../../store';
 import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSlice';
 import { useTranslation } from 'react-i18next';
@@ -9,9 +9,11 @@ import Dropdown from '../Dropdown';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { UserCredential } from 'firebase/auth';
+import { logoutUser } from '../../store/userSlice';
 const Header = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { user, loading, error } = useSelector((state: any) => state.user);
+    const navigate = useNavigate()
+    const user = useSelector((state: IRootState) => state.user);
 
     const location = useLocation();
     useEffect(() => {
@@ -34,16 +36,6 @@ const Header = () => {
             }
         }
     }, [location]);
-
-    const logOut = async (): Promise<void> => {
-        try {
-            await signOut(auth);
-            console.log('Kullanıcı çıkış yaptı.');
-            localStorage.removeItem("user");
-        } catch (error) {
-            console.error('Çıkış hatası:', (error as Error).message);
-        }
-    };
 
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl' ? true : false;
 
@@ -555,11 +547,11 @@ const Header = () => {
                                             <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
                                             <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 className="text-base">
-                                                {user?.displayName || ""}
+                                                {user?.user?.displayName || ""}
                                                     <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    {user?.email ||""}
+                                                    {user?.user?.email ||""}
                                                 </button>
                                             </div>
                                         </div>
@@ -578,7 +570,7 @@ const Header = () => {
                                             Profil
                                         </Link>
                                     </li>
-                                    <li className="border-t border-white-light dark:border-white-light/10" onClick={logOut}>
+                                    <li className="border-t border-white-light dark:border-white-light/10" onClick={(e)=>{dispatch(logoutUser(e,()=>navigate("/")))}}>
                                         <Link to="/" className="text-danger !py-3">
                                             <svg className="ltr:mr-2 rtl:ml-2 rotate-90 shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                                                 <path

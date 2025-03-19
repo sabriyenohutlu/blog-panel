@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import JoditEditor from 'jodit-react';
 import 'jodit';
 import { useMemo, useRef, useState } from 'react';
@@ -10,6 +10,8 @@ import Select, { SingleValue, ActionMeta } from 'react-select';
 import periodData from '../../../utils/periodData.json';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPostCategories } from "../../../store/postCategorySlice";
 
 interface AuthorOption {
   value: string;
@@ -60,6 +62,8 @@ type Props = {
 const AddNovelRecommendation : React.FC<Props>= ({placeholder}) => {
   const editor = useRef<any>(null);
   const [content, setContent] = useState('');
+  const dispatch = useDispatch();
+  const postCategories = useSelector((state:any)=>state.postCategories.postCategories)
   const [selectedImage, setSelectedImage] = useState<number | null>(0);
   const [preview, setPreview] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -114,6 +118,10 @@ const AddNovelRecommendation : React.FC<Props>= ({placeholder}) => {
     }),
     [placeholder]
 );
+
+ useEffect(() => {
+        dispatch(fetchPostCategories());
+    }, [dispatch]);
 
 const [tags, setTags] = useState<string[]>([]);
 const [themes, setThemes] = useState<string[]>([]);

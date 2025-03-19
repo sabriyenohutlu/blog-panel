@@ -30,6 +30,7 @@ import RecoverIdBox from '../pages/Authentication/RecoverIdBox';
 import UnlockBox from '../pages/Authentication/UnlockBox';
 import ProfilePage from '../pages/ProfilePage';
 import {RouteObject } from 'react-router-dom';
+import AddCategoryPage from '../pages/AddCategoryPage';
 const Index = lazy(() => import('../pages/Index'));
 
 type RouteConfig = RouteObject & {
@@ -171,6 +172,10 @@ const routes: RouteConfig[] = [
         path: '/kullanici-yonetimi/profil',
         element: <ProfilePage />
     },
+    {
+        path:"/tanimlamalar/kategori-ekle",
+        element:<AddCategoryPage/>
+    }
 ];
 
 export { routes, authRoutes};

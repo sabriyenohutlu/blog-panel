@@ -1,4 +1,4 @@
-import {  useEffect, useMemo } from 'react';
+import {  useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from './store';
 import { toggleRTL, toggleTheme, toggleLocale, toggleMenu, toggleLayout, toggleAnimation, toggleNavbar, toggleSemidark } from './store/themeConfigSlice';
@@ -11,11 +11,14 @@ import DefaultLayout from '../src/components/Layouts/DefaultLayout';
 import { createBrowserRouter, RouterProvider,RouteObject  } from 'react-router-dom';
 import LoadingPage from "../src/pages/LoadingPage";
 import ErrorPage from '../src/pages/ErrorPage';
+import { onAuthStateChanged,User } from 'firebase/auth';
+import { auth, db } from "./firebase";
+import { doc, getDoc } from 'firebase/firestore';
 
 function App() {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const user = useSelector((state: IRootState) => state.user);
-    const loading = useSelector((state: IRootState) => state.user.loading);
+    const [user ,setUser] = useState<User | null>(null)
+    const[loading,setLoading] = useState(false);
     const dispatch = useDispatch();
     const appDispatch = useDispatch<AppDispatch>();
 
@@ -36,6 +39,33 @@ function App() {
     }));
 
     useEffect(() => {
+        const listenToAuthChanges = onAuthStateChanged(auth, async (currentUser) => {
+             if (currentUser) {
+                 setUser(currentUser);
+                 const userRef = doc(db, 'user', currentUser.uid);
+                 getDoc(userRef).then((doc) => {
+                     if (doc.exists()) {
+                         localStorage.setItem("user", JSON.stringify(currentUser));
+                         // console.log(doc.data())
+                     } else {
+                         console.log('user yok');
+                         localStorage.removeItem("user");
+                         //navigate("/error")
+                     }
+                 });
+                 setLoading(false);
+             } else {
+               setLoading(false);
+             }
+             try {
+               listenToAuthChanges();
+             } catch (error) {
+                 console.log('hata');
+             }
+         });
+       }, [user]);
+
+    useEffect(() => {
         dispatch(toggleTheme(localStorage.getItem('theme') || themeConfig.theme));
         dispatch(toggleMenu(localStorage.getItem('menu') || themeConfig.menu));
         dispatch(toggleLayout(localStorage.getItem('layout') || themeConfig.layout));
@@ -50,7 +80,9 @@ function App() {
     const routesToUse = user ? finalRoutes : authRoute;
 
     // Tek bir router nesnesi oluşturuyoruz
-    const router = useMemo(() => createBrowserRouter(routesToUse), [user]);
+    const router = createBrowserRouter(routesToUse)
+
+    console.log("user",user)
 
     return (
         <div

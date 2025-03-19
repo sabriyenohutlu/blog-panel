@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
@@ -18,7 +18,7 @@ const RegisterBoxed = () => {
         createdAt: new Date(),
     });
 
-      const location = useLocation();
+      const navigate = useNavigate();
     const [error, setError] = useState<string | null>(null);
 
     const onChange = (e: any) => {
@@ -29,7 +29,7 @@ const RegisterBoxed = () => {
         }));
     };
 
-    const submitForm = async (e: React.FormEvent<HTMLFormElement>) => {
+    const submitForm = async (e: React.FormEvent<HTMLFormElement>,go:any) => {
         e.preventDefault();
         setError(null); // Önceki hatayı temizle
         console.log('Form gönderildi, işlem başlatılıyor...');
@@ -48,6 +48,7 @@ const RegisterBoxed = () => {
             // 2️⃣ Kullanıcıyı Firebase Authentication ile oluştur
             userCredential = await createUserWithEmailAndPassword(auth, user.email, user.password);
             console.log('Kullanıcı başarıyla oluşturuldu:', userCredential.user);
+            go()
         } catch (error) {
             setError((error as Error).message);
             console.error('Kayıt sırasında hata oluştu:', (error as Error).message);
@@ -108,7 +109,7 @@ const RegisterBoxed = () => {
                                 <h1 className="text-3xl font-extrabold uppercase !leading-snug text-primary md:text-4xl">Kayıt Ol</h1>
                                 <p className="text-base font-bold leading-normal text-white-dark">Kayıt için mail ve şifre giriniz...</p>
                             </div>
-                            <form className="space-y-5 dark:text-white" onSubmit={submitForm}>
+                            <form className="space-y-5 dark:text-white" onSubmit={(e)=>submitForm(e,()=>navigate("/"))}>
                                 <div>
                                     <label htmlFor="Name">Name</label>
                                     <div className="relative text-white-dark">
