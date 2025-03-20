@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import 'jodit';
 import { useMemo, useRef, useState } from 'react';
@@ -11,8 +11,9 @@ import periodData from '../../utils/periodData.json';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
 import biographyCategoryData from '../../utils/biographyCategoryData.json';
-import { useSelector } from 'react-redux';
-import { IRootState } from "../../store";
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchPostCategories } from '../../store/postCategorySlice';
+import { AppDispatch, IRootState } from '../../store';
 interface AuthorOption {
     value: string;
     label: string;
@@ -65,6 +66,8 @@ type Props = {
 const AddBiography: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
+    const dispatch = useDispatch<AppDispatch>();
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const user = useSelector((state: IRootState) => state.user);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
@@ -100,7 +103,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
         year_birth: '',
         year_death: '',
     });
- 
+
     const config = useMemo(
         () => ({
             readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -160,6 +163,24 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
         }));
     };
 
+    useEffect(() => {
+        dispatch(fetchPostCategories());
+    }, [dispatch]);
+
+    const options = postCategories
+        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Biyografi'))
+        .map(({ postCategory_name }: { postCategory_name: string }) => ({
+            value: postCategory_name,
+            label: postCategory_name,
+        }));
+
+    const selectOnChange = (e: any) => {
+        setNewBiography((prev) => ({
+            ...prev,
+            biography_category: e.map((item: any) => item.label),
+        }));
+    };
+
     const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>, status: string) => {
         e.preventDefault();
 
@@ -192,7 +213,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 biography_id: post_id,
                 status: status,
-                author_id: user?.user?.uid ||null
+                author_id: user?.user?.uid || null,
             });
 
             // Alt koleksiyon (reviewBody) ekleme
@@ -256,8 +277,6 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
         }
     };
 
-    console.log(newBiography);
-
     return (
         <div className="panel ">
             <label className="text-lg text-center mx-auto block w-1/2">Biyografi</label>
@@ -273,27 +292,39 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
                         <label>Yazarın Ünlü İşleri</label>
                         <input name="famousWorks" type="text" placeholder="" className="form-input" required onChange={onChange} value={newBiography.famousWorks} />
                         <label>Yazarın Doğum Yılı</label>
-                        <input type="number" id="year" name='year_birth' value={newBiography.year_birth} onChange={onChange} min="1900" max={new Date().getFullYear()} placeholder="" className="form-input w-24 border p-2 rounded" />
+                        <input
+                            type="number"
+                            id="year"
+                            name="year_birth"
+                            value={newBiography.year_birth}
+                            onChange={onChange}
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            placeholder=""
+                            className="form-input w-24 border p-2 rounded"
+                        />
                         <label>Yazarın Ölüm Yılı</label>
-                        <input type="number" id="year" name='year_death' value={newBiography.year_death} onChange={onChange} min="1900" max={new Date().getFullYear()} placeholder="" className="form-input w-24 border p-2 rounded" />
+                        <input
+                            type="number"
+                            id="year"
+                            name="year_death"
+                            value={newBiography.year_death}
+                            onChange={onChange}
+                            min="1900"
+                            max={new Date().getFullYear()}
+                            placeholder=""
+                            className="form-input w-24 border p-2 rounded"
+                        />
                         {/* <label htmlFor="ctnSelect2">Roman Temaları</label>
                         <TagsInput value={themes} onChange={setThemes} name="themes" placeHolder="Tema giriniz" /> */}
                     </div>
 
                     <div className="flex flex-col gap-2   w-2/6">
                         <label htmlFor="ctnSelect1">Biyografi Kategorisi</label>
-                        <select name="biography_category" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
-                            <option>Kategori seçiniz...</option>
-                            {biographyCategoryData.categories.map((item: any) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                         <div className="flex flex-col  flex-wrap mt-4">
                             <div className="flex flex-row justify-between">
                                 <label>Seçilen Kategoriler</label>
-                                <button className="btn btn-info btn-sm">Kategorileri Kaldır</button>
                             </div>
 
                             {Array.isArray(newBiography.biography_category) && newBiography.biography_category.length > 0

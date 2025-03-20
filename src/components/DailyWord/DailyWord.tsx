@@ -12,13 +12,16 @@ import { PiEye } from 'react-icons/pi';
 import { AppDispatch } from 'store';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
+import { fetchUsers } from '../../store/userSlice';
 const DailyWord = () => {
     const dispatch = useDispatch<AppDispatch>();
     const dailyWordData = useSelector((state: any) => state.dailyWord.dailyWords);
     const loading = useSelector((state: any) => state.dailyWord.loading);
     const error = useSelector((state: any) => state.dailyWord.error);
+    const usersList = useSelector((state: any) => state.user.usersList);
     useEffect(() => {
         dispatch(fetchDailyWord());
+        dispatch(fetchUsers())
     }, [dispatch]);
 
     const showMessage2 = (title: string, color: string) => {
@@ -88,6 +91,11 @@ const DailyWord = () => {
         default: 'Onay bekliyor',
     };
 
+    const userTranslations = usersList?.reduce((acc:any, user:any) => {
+        acc[user?.userId] = user?.name;
+        return acc;
+      }, {});
+
     return (
         <div className="panel mt-6 flex flex-col gap-4">
             <Link className="block" to="/icerik-yonetimi/gunluk-soz/gunluk-soz-ekle">
@@ -100,6 +108,7 @@ const DailyWord = () => {
                             <th>Söz</th>
                             <th>Yazarın Adı</th>
                             <th>Editör</th>
+                            <th>Kategori</th>
                             <th>Yayınlanma Tarihi</th>
                             <th>Durum</th>
                             <th className="text-center">İşlemler</th>
@@ -115,6 +124,8 @@ const DailyWord = () => {
                                     </td>
                                     <td>{data.dailyWord_authorName}</td>
                                     <td>{data.author_id}</td>
+                                    {/* <td>{`${userTranslations[String(data?.author_id)] || ""} `}</td> */}
+                                    <td>{data.dailyWord_category.map((i:any)=><div className='flex flex-row justify-evenly'><span>{i}</span></div>)}</td>
                                     <td>
                                         <td>{new Date(data.createdAt.seconds * 1000).toLocaleString()}</td>
                                     </td>

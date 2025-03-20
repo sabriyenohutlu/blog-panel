@@ -116,8 +116,6 @@ const UpdateNovelReview: React.FC<any> = ({ novelReview, reviewBody, placeholder
         setUpdatedReview((prev) => ({ ...prev, [name]: value }));
     };
 
-    console.log(updatedReview);
-
     const updateFormSubmitHandler = async (e: any) => {
         e.preventDefault();
         try {

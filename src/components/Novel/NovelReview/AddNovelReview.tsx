@@ -1,6 +1,6 @@
 import JoditEditor from 'jodit-react';
 import 'jodit';
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import ImageCropper from '../../ImageCropper/ImageCropper';
 import novelCategoryData from '../../../utils/novelCategoryData.json';
 import authorsData from '../../../utils/authorsData.json';
@@ -11,6 +11,9 @@ import periodData from '../../../utils/periodData.json';
 import FancyBoxGallery from '../../FancyBoxGallery/FancyBoxGallery';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from 'store';
+import { fetchPostCategories } from '../../../store/postCategorySlice';
 interface AuthorOption {
     value: string;
     label: string;
@@ -45,7 +48,7 @@ type NewNovelReviewType = {
     comments: string[];
     likes: number;
     dislikes: number;
-    subCategory_title:string;
+    subCategory_title: string;
     view_count: number;
     createdAt: any;
     updatedAt: any;
@@ -62,6 +65,8 @@ interface Tag {
 const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
+    const dispatch = useDispatch<AppDispatch>();
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -92,7 +97,9 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         novel_bookCategory: [],
         period: '',
     });
-
+    useEffect(() => {
+        dispatch(fetchPostCategories());
+    }, [dispatch]);
     const [fancyboxIsActive, setFancyboxIsActive] = useState(false);
 
     const config = useMemo(
@@ -188,7 +195,22 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         }));
     };
 
-    const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>,status:string) => {
+    const options = postCategories
+    .filter((category: any) => category.whatsCategory.some((item:any) => item === 'Roman'))
+    .map(({ postCategory_name }: { postCategory_name: string }) => ({
+        value: postCategory_name,
+        label: postCategory_name,
+    }));
+
+
+    const selectOnChange = (e: any) => {
+        setNewNovelReview((prev) => ({
+            ...prev,
+            novel_bookCategory: e.map((item: any) => item.label),
+        }));
+    };
+
+    const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>, status: string) => {
         e.preventDefault();
 
         const post_id = Math.floor(100000 + Math.random() * 900000).toString();
@@ -218,7 +240,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 updatedAt: now,
                 tags: tags,
                 novel_reviewId: post_id,
-                status:status
+                status: status,
             });
 
             // Alt koleksiyon (reviewBody) ekleme
@@ -240,7 +262,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 novel_reviewTitle: '',
                 novel_summaryInfo: '',
                 category_id: 176816,
-                subCategory_title:"roman-incelemesi",
+                subCategory_title: 'roman-incelemesi',
                 subCategory_id: 176801,
                 subCategory_name: 'novelReview',
                 author_id: '',
@@ -292,7 +314,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                         <label htmlFor="ctnSelect1">Kitap Yazarı</label>
                         <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} />
                         <label htmlFor="ctnSelect2">Roman Dönemi</label>
-                        <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period"  value={newNovelReview.period}>
+                        <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period" value={newNovelReview.period}>
                             <option>Dönem seçiniz</option>
                             {periodData.periods.map((item: any, key: number) => (
                                 <>
@@ -306,14 +328,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
 
                     <div className="flex flex-col gap-2   w-2/6">
                         <label htmlFor="ctnSelect1">Roman Kategorisi</label>
-                        <select name="novel_bookCategory" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
-                            <option>Kategori seçiniz...</option>
-                            {novelCategoryData.categories.map((item: novelCategoryType) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                         <div className="flex flex-col  flex-wrap mt-4">
                             <span>Seçilen Kategoriler</span>
                             {Array.isArray(newNovelReview.novel_bookCategory) && newNovelReview.novel_bookCategory.length > 0
@@ -335,11 +350,11 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                         onBlur={(newContent) => setContent(newContent)} // preferred to use only this option to update the content for performance reasons
                         onChange={(newContent) => {}}
                     />
-                    <div className='flex flex-row gap-2'>
-                        <button type="submit" className="btn btn-success mt-6 " onClick={(e) => formSubmit(e,'pending')}>
+                    <div className="flex flex-row gap-2">
+                        <button type="submit" className="btn btn-success mt-6 " onClick={(e) => formSubmit(e, 'pending')}>
                             Onaya Gönder
                         </button>
-                        <button type="submit" className="btn btn-secondary mt-6 "  onClick={(e) => formSubmit(e, 'inProgress')}>
+                        <button type="submit" className="btn btn-secondary mt-6 " onClick={(e) => formSubmit(e, 'inProgress')}>
                             Taslak Olarak Kaydet
                         </button>
                     </div>

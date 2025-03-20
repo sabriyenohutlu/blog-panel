@@ -104,7 +104,7 @@ const StoryTable = () => {
   };
     return(
       <div className="panel mt-6 flex flex-col gap-4">
-      <Link className="block" to="/icerik-yonetimi/roman/roman-incelemesi-ekle">
+      <Link className="block" to="/icerik-yonetimi/hikaye/hikaye-ekle">
           <button className="btn btn-sm btn-primary">Yeni Hikaye Ekle</button>
       </Link>
       <div className="table-responsive mb-5">

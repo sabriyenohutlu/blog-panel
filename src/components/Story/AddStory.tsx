@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import 'jodit';
 import { useMemo, useRef, useState } from 'react';
@@ -10,6 +10,9 @@ import periodData from '../../utils/periodData.json';
 import { TagsInput } from 'react-tag-input-component';
 import { db, getDownloadURL, ref, storage, uploadBytes } from '../../firebase';
 import { collection, doc, setDoc } from 'firebase/firestore';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from 'store';
+import { fetchPostCategories } from "../../store/postCategorySlice";
 interface AuthorOption {
     value: string;
     label: string;
@@ -55,6 +58,8 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
     const [uploading, setUploading] = useState(false);
+    const dispatch = useDispatch<AppDispatch>();
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const [newStory, setNewStory] = useState({
         story_id: 0,
         story_name: '',
@@ -108,8 +113,13 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
         [placeholder]
     );
 
+      useEffect(() => {
+           dispatch(fetchPostCategories());
+       }, [dispatch]);
+
     const [tags, setTags] = useState<string[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
+
 
     const onSelectChange = (selectedOption: SingleValue<AuthorOption>, actionMeta: ActionMeta<AuthorOption>) => {
         // Seçilen seçenek varsa
@@ -121,6 +131,21 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
             }));
         }
     };
+
+    const options = postCategories
+    .filter((category: any) => category.whatsCategory.some((item:any) => item === 'Hikaye'))
+    .map(({ postCategory_name }: { postCategory_name: string }) => ({
+        value: postCategory_name,
+        label: postCategory_name,
+    }));
+
+    const selectOnChange = (e: any) => {
+        setNewStory((prev) => ({
+            ...prev,
+            story_category: e.map((item: any) => item.label),
+        }));
+    };
+
     const formattedAuthors = authorsData.authors.map((author: any) => ({
         value: author.bookauthor_name, // label ve value olarak kullanacağımız değer
         label: author.bookauthor_name, // label değeri
@@ -271,14 +296,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
 
                     <div className="flex flex-col gap-2   w-2/6">
                         <label htmlFor="ctnSelect1">Hikaye Kategorisi</label>
-                        <select name="story_category" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
-                            <option>Kategori seçiniz...</option>
-                            {novelCategoryData.categories.map((item: novelCategoryType) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                         <div className="flex flex-col  flex-wrap mt-4">
                             <span>Seçilen Kategoriler</span>
                             {Array.isArray(newStory.story_category) && newStory.story_category.length > 0 ? newStory.story_category.map((item: any) => <span key={item}>{item}</span>) : ''}

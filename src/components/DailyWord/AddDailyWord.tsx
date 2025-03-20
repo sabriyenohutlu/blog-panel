@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import { doc, setDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import dailyWordCategory from '../../utils/dailyWordCategory.json';
 import Select, { StylesConfig } from 'react-select';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from 'store';
+import { fetchPostCategories } from '../../store/postCategorySlice';
 type NewWordType = {
     dailyWord_id: number;
     dailyWord_title: string;
@@ -40,11 +42,18 @@ const AddDailyWord: React.FC<any> = () => {
         updatedAt: '',
         dailyWord_category: [],
     });
+    const dispatch = useDispatch<AppDispatch>();
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
+    useEffect(() => {
+        dispatch(fetchPostCategories());
+    }, [dispatch]);
 
-    const options = dailyWordCategory.categories.map((item: any) => ({
-        value: item.value,
-        label: item.label
-      }));
+    const options = postCategories
+        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Günlük Söz'))
+        .map(({ postCategory_name }: { postCategory_name: string }) => ({
+            value: postCategory_name,
+            label: postCategory_name,
+        }));
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -71,9 +80,9 @@ const AddDailyWord: React.FC<any> = () => {
         setNewWord((prev) => ({
             ...prev,
             dailyWord_category: e.map((item: any) => item.label),
-        }));        
-    }
-    console.log(newWord);
+        }));
+    };
+
     const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>, status: string) => {
         e.preventDefault();
 
@@ -88,7 +97,7 @@ const AddDailyWord: React.FC<any> = () => {
                 ...newWord,
                 createdAt: now,
                 updatedAt: now,
-                dailyWord_recordedDate:now,
+                dailyWord_recordedDate: now,
                 dailyWord_id: post_id,
                 status: status,
             });
@@ -146,7 +155,7 @@ const AddDailyWord: React.FC<any> = () => {
                     </div>
                     <div className="flex flex-col gap-2   w-1/3">
                         <label htmlFor="ctnSelect1">Günlük Söz Kategorisi</label>
-                        <Select closeMenuOnSelect={false} className='text-white-dark ' isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange}/>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                     </div>
                 </div>
 

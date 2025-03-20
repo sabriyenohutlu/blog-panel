@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import JoditEditor from 'jodit-react';
 import 'jodit';
 import { useMemo, useRef, useState } from 'react';
@@ -11,6 +11,9 @@ import periodData from '../../utils/periodData.json';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
 import biographyCategoryData from '../../utils/biographyCategoryData.json';
+import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch } from 'store';
+import { fetchPostCategories } from '../../store/postCategorySlice';
 type NewPoetryType = {
     poetry_id: number;
     poetry_name: string;
@@ -21,7 +24,7 @@ type NewPoetryType = {
     subCategory_id: number; //307101
     subCategory_name: string;
     author_id: string;
-    body:string;
+    body: string;
     status: string;
     tags: string[]; //gönderirken tags ekle yolla
     poetryauthor_id: string;
@@ -34,7 +37,7 @@ type NewPoetryType = {
     view_count: number;
     createdAt: any;
     updatedAt: any;
-    poetryOfWho:string;
+    poetryOfWho: string;
     rating: number;
     poetry_category: string[];
     themes: string[];
@@ -57,6 +60,8 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
     const [content, setContent] = useState('');
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
+    const dispatch = useDispatch<AppDispatch>();
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const [uploading, setUploading] = useState(false);
     const [newPoetry, setNewPoetry] = useState({
         poetry_id: 0,
@@ -68,8 +73,8 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         subCategory_id: 307101, //307101
         subCategory_name: '',
         author_id: '',
-        poetryOfWho:"",
-        body:"",
+        poetryOfWho: '',
+        body: '',
         status: '',
         tags: [], //gönderirken tags ekle yolla
         poetryauthor_id: '',
@@ -111,6 +116,9 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         }),
         [placeholder]
     );
+    useEffect(() => {
+        dispatch(fetchPostCategories());
+    }, [dispatch]);
     const [tags, setTags] = useState<string[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
 
@@ -133,6 +141,19 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         setNewPoetry((prev) => ({
             ...prev,
             [name]: newValue,
+        }));
+    };
+
+    const options = postCategories
+        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Şiir'))
+        .map(({ postCategory_name }: { postCategory_name: string }) => ({
+            value: postCategory_name,
+            label: postCategory_name,
+        }));
+    const selectOnChange = (e: any) => {
+        setNewPoetry((prev) => ({
+            ...prev,
+            story_category: e.map((item: any) => item.label),
         }));
     };
 
@@ -186,7 +207,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
                 poetry_id: 0,
                 poetry_name: '',
                 poetry_headImage: '',
-                body:"",
+                body: '',
                 poetry_title: '',
                 poetry_summaryInfo: '',
                 category_id: 307123, //307123
@@ -199,7 +220,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
                 poetryauthor_name: '',
                 poetry_recordedDate: new Date(),
                 comments: [],
-                poetryOfWho:"",
+                poetryOfWho: '',
                 likes: 0,
                 dislikes: 0,
                 url: '',
@@ -228,21 +249,21 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         }
     };
 
-    console.log(newPoetry)
+    console.log(newPoetry);
 
     return (
         <div className="panel ">
             <label className="text-lg text-center mx-auto block w-1/2">Şiir</label>
             <form className="form flex flex-col w-full mt-4  items-start gap-4  ">
                 <div className="flex flex-row w-full justify-between">
-                    <div className="flex flex-col justify-between gap-2 w-3/6">
+                    <div className="flex flex-col justify-between gap-2 w-2/6">
                         <label>Şiir Başlığı</label>
                         <input name="poetry_title" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newPoetry.poetry_title} />
                         <label>Özet Bilgi</label>
                         <input name="poetry_summaryInfo" type="text" placeholder="..." className="form-input " required onChange={onChange} value={newPoetry.poetry_summaryInfo} />
                         <label>Yazar Adı</label>
                         <input name="poetryOfWho" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newPoetry.poetryOfWho} />
-                       
+
                         <label htmlFor="ctnSelect2">Şiir Temaları</label>
                         <TagsInput value={themes} onChange={setThemes} name="themes" placeHolder="Tema giriniz" />
                         {/* <label htmlFor="ctnSelect2">Roman Temaları</label>
@@ -251,23 +272,14 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
 
                     <div className="flex flex-col gap-2   w-2/6">
                         <label htmlFor="ctnSelect1">Şiir Kategorisi</label>
-                        <select name="poetry_category" id="ctnSelect1" multiple className="form-multiselect text-white-dark h-40" onChange={onChange} required>
-                            <option>Kategori seçiniz...</option>
-                            {biographyCategoryData.categories.map((item: any) => (
-                                <option value={item.name} key={item.id}>
-                                    {item.name}
-                                </option>
-                            ))}
-                        </select>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                         <div className="flex flex-col  flex-wrap mt-4">
                             <div className="flex flex-row justify-between">
                                 <label>Seçilen Kategoriler</label>
-                                <button className="btn btn-info btn-sm">Kategorileri Kaldır</button>
+                               
                             </div>
 
-                            {Array.isArray(newPoetry.poetry_category) && newPoetry.poetry_category.length > 0
-                                ? newPoetry.poetry_category.map((item: any) => <span key={item}>{item}</span>)
-                                : ''}
+                            {Array.isArray(newPoetry.poetry_category) && newPoetry.poetry_category.length > 0 ? newPoetry.poetry_category.map((item: any) => <span key={item}>{item}</span>) : ''}
                         </div>
                         <div className="w-full ">
                             <label>Taglar</label>

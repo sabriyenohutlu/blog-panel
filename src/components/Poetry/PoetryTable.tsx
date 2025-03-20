@@ -86,7 +86,7 @@ const PoetryTable = () => {
           };
           return (
             <div className="panel mt-6 flex flex-col gap-4">
-            <Link className="block" to="/icerik-yonetimi/biyografi/biyografi-ekle">
+            <Link className="block" to="/icerik-yonetimi/siir/siir-ekle">
                 <button className="btn btn-sm btn-primary">Yeni Şiir Ekle</button>
             </Link>
             <div className="table-responsive mb-5">
