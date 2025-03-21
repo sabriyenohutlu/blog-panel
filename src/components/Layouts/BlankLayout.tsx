@@ -1,12 +1,17 @@
-import { PropsWithChildren } from 'react';
-import App from '../../App';
+import { ReactNode } from "react";
 
-const BlankLayout = ({ children }: PropsWithChildren) => {
-    return (
-        <App>
-            <div className="text-black dark:text-white-dark min-h-screen">{children} </div>
-        </App>
-    );
+type BlankLayoutProps = {
+    children: ReactNode;
+  }
+
+const BlankLayout: React.FC<BlankLayoutProps> = ({ children }) => {
+  return (
+ 
+      <div className="text-black dark:text-white-dark min-h-screen">
+        {children}
+      </div>
+  
+  );
 };
 
 export default BlankLayout;
