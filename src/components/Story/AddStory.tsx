@@ -59,6 +59,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
     const [content, setContent] = useState('');
     const [uploading, setUploading] = useState(false);
     const dispatch = useDispatch<AppDispatch>();
+    const thisUser = useSelector((state: any) => state.users.user);
     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const [newStory, setNewStory] = useState({
         story_id: 0,
@@ -132,12 +133,22 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
         }
     };
 
-    const options = postCategories
-    .filter((category: any) => category.whatsCategory.some((item:any) => item === 'Hikaye'))
-    .map(({ postCategory_name }: { postCategory_name: string }) => ({
-        value: postCategory_name,
-        label: postCategory_name,
-    }));
+    let groupNames = postCategories?.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Hikaye"]
+       ?.map(({ postCategory_name }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
+        }));
 
     const selectOnChange = (e: any) => {
         setNewStory((prev) => ({
@@ -176,7 +187,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
 
     const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>, status: string) => {
         e.preventDefault();
-
+        const author = thisUser?.uid;
         const post_id = Math.floor(100000 + Math.random() * 900000).toString();
         const storyRef = doc(db, 'story', post_id);
         setUploading(true);
@@ -206,6 +217,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
                 story_id: post_id,
                 status: status,
                 themes: themes,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme

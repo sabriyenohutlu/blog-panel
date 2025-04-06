@@ -68,10 +68,11 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
     const [content, setContent] = useState('');
     const dispatch = useDispatch<AppDispatch>();
     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
-    const user = useSelector((state: IRootState) => state.user);
+    const user = useSelector((state: any) => state.users.user);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const thisUser = useSelector((state: any) => state.users.user);
     const [newBiography, setNewBiography] = useState({
         biography_id: 0,
         biograph_headImage: '',
@@ -167,11 +168,21 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
         dispatch(fetchPostCategories());
     }, [dispatch]);
 
-    const options = postCategories
-        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Biyografi'))
-        .map(({ postCategory_name }: { postCategory_name: string }) => ({
-            value: postCategory_name,
-            label: postCategory_name,
+    let groupNames = postCategories.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Biyografi"]
+       .map(({ postCategory_name }: { postCategory_name: string }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
         }));
 
     const selectOnChange = (e: any) => {
@@ -189,6 +200,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
         setUploading(true);
         let urledTitle = '';
         const now = new Date();
+        const author = thisUser?.uid;
 
         const regex: RegExp = /[^a-zA-Z0-9çğıİöşüÇĞIÖŞÜ-\s]/g;
 
@@ -213,7 +225,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 biography_id: post_id,
                 status: status,
-                author_id: user?.user?.uid || null,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme

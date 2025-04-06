@@ -6,14 +6,13 @@ import { toggleRTL, toggleTheme, toggleSidebar } from '../../store/themeConfigSl
 import { useTranslation } from 'react-i18next';
 import i18next from 'i18next';
 import Dropdown from '../Dropdown';
-import { signOut } from 'firebase/auth';
-import { auth } from '../../firebase';
-import { UserCredential } from 'firebase/auth';
 import { logoutUser } from '../../store/userSlice';
 const Header = () => {
     const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate()
-    const user = useSelector((state: IRootState) => state.user);
+    const thisUser = useSelector((state: any) => state.users.user);
+
+    console.log('thisUser', thisUser);
 
     const location = useLocation();
     useEffect(() => {
@@ -101,7 +100,7 @@ const Header = () => {
     ]);
 
     const removeNotification = (value: number) => {
-        setNotifications(notifications.filter((user) => user.id !== value));
+        setNotifications(notifications.filter((thisUser) => thisUser.id !== value));
     };
 
     const [search, setSearch] = useState(false);
@@ -547,11 +546,11 @@ const Header = () => {
                                             <img className="rounded-md w-10 h-10 object-cover" src="/assets/images/user-profile.jpeg" alt="userProfile" />
                                             <div className="ltr:pl-4 rtl:pr-4 truncate">
                                                 <h4 className="text-base">
-                                                {user?.user?.displayName || ""}
+                                                {thisUser?.displayName || ""}
                                                     <span className="text-xs bg-success-light rounded text-success px-1 ltr:ml-2 rtl:ml-2">Pro</span>
                                                 </h4>
                                                 <button type="button" className="text-black/60 hover:text-primary dark:text-dark-light/60 dark:hover:text-white">
-                                                    {user?.user?.email ||""}
+                                                    {thisUser?.email ||""}
                                                 </button>
                                             </div>
                                         </div>

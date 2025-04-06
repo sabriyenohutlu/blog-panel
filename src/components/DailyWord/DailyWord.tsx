@@ -12,17 +12,15 @@ import { PiEye } from 'react-icons/pi';
 import { AppDispatch } from 'store';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { fetchUsers } from '../../store/userSlice';
+
 const DailyWord = () => {
     const dispatch = useDispatch<AppDispatch>();
     const dailyWordData = useSelector((state: any) => state.dailyWord.dailyWords);
     const loading = useSelector((state: any) => state.dailyWord.loading);
     const error = useSelector((state: any) => state.dailyWord.error);
-    const usersList = useSelector((state: any) => state.user.usersList);
     useEffect(() => {
         dispatch(fetchDailyWord());
-        dispatch(fetchUsers())
-    }, [dispatch]);
+    }, [dispatch,dailyWordData]);
 
     const showMessage2 = (title: string, color: string) => {
         Swal.fire({
@@ -91,10 +89,10 @@ const DailyWord = () => {
         default: 'Onay bekliyor',
     };
 
-    const userTranslations = usersList?.reduce((acc:any, user:any) => {
-        acc[user?.userId] = user?.name;
-        return acc;
-      }, {});
+    // const userTranslations = usersList?.reduce((acc:any, user:any) => {
+    //     acc[user?.userId] = user?.name;
+    //     return acc;
+    //   }, {});
 
     return (
         <div className="panel mt-6 flex flex-col gap-4">

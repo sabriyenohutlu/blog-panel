@@ -12,6 +12,7 @@ import Tippy from '@tippyjs/react';
 import '../../TippyTooltip/tippy.css';
 import { PiEye } from 'react-icons/pi';
 import { fetchRec } from '../../../store/novelRecSlice';
+import PostCategory from '../../../utils/postCategory.jsx';
 const NovelRecommendationTable = () => {
     const dispatch = useDispatch<AppDispatch>();
     const recData = useSelector((state: IRootState) => state.novelRec.recommendations);
@@ -140,6 +141,7 @@ const NovelRecommendationTable = () => {
                                 </td>
                                 <td className="text-center">
                                     <div className="flex flex-row justify-start gap-2">
+                                    <PostCategory/>
                                         <Tippy content="Yayınla" allowHTML={true} delay={0} animation="fade" theme="light">
                                             <button onClick={(e: any) => approvalBtnClickHandler(e, data.novel_recId)} disabled={data.status === 'completed'}>
                                                 {data.status === 'completed' ? '' : <FcApproval size={24} />}

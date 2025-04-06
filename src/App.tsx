@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from './store';
 import { toggleRTL, toggleTheme, toggleLocale, toggleMenu, toggleLayout, toggleAnimation, toggleNavbar, toggleSemidark } from './store/themeConfigSlice';
@@ -6,19 +6,16 @@ import store from './store';
 import { listenToAuthChanges } from '../src/store/userSlice';
 import { AppDispatch } from './store';
 import { routes, authRoutes } from './router/routes';
-import BlankLayout from '../src/components/Layouts/BlankLayout';
 import DefaultLayout from '../src/components/Layouts/DefaultLayout';
 import { createBrowserRouter, RouterProvider, RouteObject } from 'react-router-dom';
 import LoadingPage from '../src/pages/LoadingPage';
 import ErrorPage from '../src/pages/ErrorPage';
-import { onAuthStateChanged, User } from 'firebase/auth';
-import { auth, db } from './firebase';
-import { doc, getDoc } from 'firebase/firestore';
+
 
 function App() {
     const themeConfig = useSelector((state: IRootState) => state.themeConfig);
-    const user = useSelector((state: any) => state.user.user);
-    const loading = useSelector((state: any) => state.user.loading);
+    const user = useSelector((state: any) => state.users.user);
+    const loading = useSelector((state: any) => state.users.loading);
     const dispatch = useDispatch();
     const appDispatch = useDispatch<AppDispatch>();
 
@@ -49,7 +46,7 @@ function App() {
         dispatch(toggleSemidark(localStorage.getItem('semidark') || themeConfig.semidark));
         appDispatch(listenToAuthChanges());
     }, [appDispatch, user, themeConfig.theme, themeConfig.menu, themeConfig.layout, themeConfig.rtlClass, themeConfig.animation, themeConfig.navbar, themeConfig.locale, themeConfig.semidark]);
-
+    console.log('user', user);
     const routesToUse = user ? finalRoutes : authRoute;
 
     // Tek bir router nesnesi oluşturuyoruz

@@ -16,26 +16,8 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
-const provider = new GoogleAuthProvider();
 
-const signInWithGoogle = async () => {
-  try {
-    const result = await signInWithPopup(auth, provider);
-    console.log("Kullanıcı:", result.user);
-  } catch (error:any) {
-    console.error("Giriş hatası:", error.message);
-  }
-};
-const logOut = async () => {
-  try {
-    await signOut(auth);
-    console.log("Kullanıcı çıkış yaptı.");
-  } catch (error:any) {
-    console.error("Çıkış hatası:", error.message);
-  }
-};
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export { storage, ref, uploadBytes, getDownloadURL };
 // Initialize Firebase
-export { signInWithGoogle, logOut };

@@ -1,4 +1,4 @@
-import { onAuthStateChanged, signOut, User } from 'firebase/auth';
+import { GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut, User } from 'firebase/auth';
 import { auth, db } from '../firebase';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppDispatch } from 'store';
@@ -25,7 +25,7 @@ const initialState: UserState = {
 };
 
 const userSlice = createSlice({
-    name: 'user',
+    name: 'users',
     initialState,
     reducers: {
         setUser: (state, action) => {
@@ -70,6 +70,15 @@ export const fetchUsers = () => async (dispatch: AppDispatch) => {
         dispatch(setLoading(false));
     }
 };
+const provider = new GoogleAuthProvider();
+export const signInWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, provider);
+      console.log("Kullanıcı:", result.user);
+    } catch (error:any) {
+      console.error("Giriş hatası:", error.message);
+    }
+  };
 export const listenToAuthChanges = () => (dispatch: AppDispatch) => {
     dispatch(setLoading(true));
 

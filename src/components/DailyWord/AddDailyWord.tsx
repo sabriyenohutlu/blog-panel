@@ -43,17 +43,30 @@ const AddDailyWord: React.FC<any> = () => {
         dailyWord_category: [],
     });
     const dispatch = useDispatch<AppDispatch>();
+    const thisUser = useSelector((state: any) => state.users.user);
     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     useEffect(() => {
         dispatch(fetchPostCategories());
     }, [dispatch]);
 
-    const options = postCategories
-        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Günlük Söz'))
-        .map(({ postCategory_name }: { postCategory_name: string }) => ({
-            value: postCategory_name,
-            label: postCategory_name,
+    let groupNames = postCategories.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Günlük Söz"]
+       .map(({ postCategory_name }: { postCategory_name: string }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
         }));
+  
+    
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -90,6 +103,7 @@ const AddDailyWord: React.FC<any> = () => {
         const dailwYordRef = doc(db, 'dailyWord', post_id);
         setUploading(true);
         const now = new Date();
+        const author = thisUser?.uid;
 
         try {
             // b = await uploadImage(urledTitle);
@@ -100,6 +114,7 @@ const AddDailyWord: React.FC<any> = () => {
                 dailyWord_recordedDate: now,
                 dailyWord_id: post_id,
                 status: status,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme

@@ -1,19 +1,17 @@
 import JoditEditor from 'jodit-react';
 import 'jodit';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import ImageCropper from '../../ImageCropper/ImageCropper';
-import novelCategoryData from '../../../utils/novelCategoryData.json';
 import authorsData from '../../../utils/authorsData.json';
 import { collection, doc, setDoc, Timestamp } from 'firebase/firestore';
 import { db, getDownloadURL, ref, storage, uploadBytes } from '../../../firebase';
 import Select, { SingleValue, ActionMeta } from 'react-select';
 import periodData from '../../../utils/periodData.json';
-import FancyBoxGallery from '../../FancyBoxGallery/FancyBoxGallery';
 import Swal from 'sweetalert2';
 import { TagsInput } from 'react-tag-input-component';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'store';
 import { fetchPostCategories } from '../../../store/postCategorySlice';
+import { fetchAuthors } from '../../../store/authorSlice';
 interface AuthorOption {
     value: string;
     label: string;
@@ -66,10 +64,12 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
     const dispatch = useDispatch<AppDispatch>();
-    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
+     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
+     const authors = useSelector((state: any) => state.author.authors);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const thisUser = useSelector((state: any) => state.users.user);
     const [newNovelReview, setNewNovelReview] = useState({
         novel_reviewId: 0,
         novel_name: '',
@@ -99,7 +99,26 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
     });
     useEffect(() => {
         dispatch(fetchPostCategories());
+        dispatch(fetchAuthors());
     }, [dispatch]);
+
+    let groupNames = postCategories?.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Roman"]
+       ?.map(({ postCategory_name }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
+        }));
+
     const [fancyboxIsActive, setFancyboxIsActive] = useState(false);
 
     const config = useMemo(
@@ -167,10 +186,11 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         }
     };
 
-    const formattedAuthors = authorsData.authors.map((author) => ({
-        value: author.bookauthor_name, // label ve value olarak kullanacağımız değer
-        label: author.bookauthor_name, // label değeri
-        author_id: author.bookauthor_id, // Yazarın ID'si
+
+    const formattedAuthors = authors.map((author) => ({
+        value: author.author_name, // label ve value olarak kullanacağımız değer
+        label: author.author_name, // label değeri
+        author_id: author.author_id, // Yazarın ID'si
     }));
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -195,14 +215,6 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         }));
     };
 
-    const options = postCategories
-    .filter((category: any) => category.whatsCategory.some((item:any) => item === 'Roman'))
-    .map(({ postCategory_name }: { postCategory_name: string }) => ({
-        value: postCategory_name,
-        label: postCategory_name,
-    }));
-
-
     const selectOnChange = (e: any) => {
         setNewNovelReview((prev) => ({
             ...prev,
@@ -218,6 +230,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         setUploading(true);
         let urledTitle = '';
         const now = new Date();
+        const author = thisUser?.uid;
 
         const regex: RegExp = /[^a-zA-Z0-9çğıİöşüÇĞIÖŞÜ-\s]/g;
 
@@ -241,6 +254,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 novel_reviewId: post_id,
                 status: status,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme

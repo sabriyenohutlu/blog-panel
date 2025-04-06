@@ -4,7 +4,7 @@ import IconUser from '../../components/Icon/IconUser';
 import IconMail from '../../components/Icon/IconMail';
 import IconLockDots from '../../components/Icon/IconLockDots';
 import IconGoogle from '../../components/Icon/IconGoogle';
-import { auth, signInWithGoogle, logOut, db } from '../../firebase';
+import { auth, db } from '../../firebase';
 import { createUserWithEmailAndPassword, onAuthStateChanged, User, signInWithEmailAndPassword, signOut, UserCredential, getAuth, updateProfile } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 

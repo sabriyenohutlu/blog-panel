@@ -92,6 +92,8 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         themes: [],
     });
 
+    const thisUser = useSelector((state: any) => state.users.user);
+
     const config = useMemo(
         () => ({
             readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -144,11 +146,21 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         }));
     };
 
-    const options = postCategories
-        .filter((category: any) => category.whatsCategory.some((item: any) => item === 'Şiir'))
-        .map(({ postCategory_name }: { postCategory_name: string }) => ({
-            value: postCategory_name,
-            label: postCategory_name,
+    let groupNames = postCategories.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Şiir"]
+       .map(({ postCategory_name }: { postCategory_name: string }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
         }));
     const selectOnChange = (e: any) => {
         setNewPoetry((prev) => ({
@@ -164,6 +176,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         const poetryRef = doc(db, 'poetry', post_id);
         setUploading(true);
         let urledTitle = '';
+        const author = thisUser?.uid;
         const now = new Date();
 
         const regex: RegExp = /[^a-zA-Z0-9çğıİöşüÇĞIÖŞÜ-\s]/g;
@@ -189,6 +202,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 poetry_id: post_id,
                 status: status,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme

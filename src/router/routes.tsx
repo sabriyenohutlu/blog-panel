@@ -31,6 +31,8 @@ import UnlockBox from '../pages/Authentication/UnlockBox';
 import ProfilePage from '../pages/ProfilePage';
 import {RouteObject } from 'react-router-dom';
 import AddCategoryPage from '../pages/AddCategoryPage';
+import AddAuthorPage from '../pages/AddAuthorPage';
+
 const Index = lazy(() => import('../pages/Index'));
 
 type RouteConfig = RouteObject & {
@@ -175,6 +177,10 @@ const routes: RouteConfig[] = [
     {
         path:"/tanimlamalar/kategori-ekle",
         element:<AddCategoryPage/>
+    },
+    {
+        path:"/tanimlamalar/yazar-ekle",
+        element:<AddAuthorPage/>
     }
 ];
 

@@ -20,7 +20,7 @@ const BiographyTable = () => {
     const bioData = useSelector((state: IRootState) => state.biography.biographies);
     const loading = useSelector((state: IRootState) => state.biography.loading);
     const error = useSelector((state: IRootState) => state.biography.error);
-    const usersList = useSelector((state: IRootState) => state.user.usersList);
+    const usersList = useSelector((state: any) => state.users.usersList);
     useEffect(() => {
         dispatch(fetchBio());
     }, [dispatch]);

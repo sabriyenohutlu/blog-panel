@@ -11,6 +11,7 @@ const AddCategory = () => {
     const categories = useSelector((state: any) => state.categories.categories);
     const error = useSelector((state: any) => state.categories.error);
     const dispatch = useDispatch<AppDispatch>();
+    const [selectedOptions, setSelectedOptions] = useState<any[]>([]);
 
     const [newCategory, setNewCategory] = useState({
         createdAt: '',
@@ -18,7 +19,7 @@ const AddCategory = () => {
         status: 'pending',
         postCategory_id: 0,
         postCategory_name: '',
-        whatsCategory: '',
+        whatsCategory: [],
     });
     useEffect(() => {
         dispatch(fetchCategories());
@@ -33,18 +34,30 @@ const AddCategory = () => {
     };
 
     const selectOnChange = (e: any) => {
+        setSelectedOptions(e);
         setNewCategory((prev) => ({
             ...prev,
             whatsCategory: e.map((item: any) => item.label),
         }));
     };
-    
+
     const options = categories.map((item: any) => ({
         value: item.category_name,
         label: item.category_title,
     }));
     const formSubmit = async (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault();
+        const category = String(newCategory.whatsCategory || '').trim();
+        const categoryName = String(newCategory.postCategory_name || '').trim();
+        if (!category || !categoryName) {
+            Swal.fire({
+                title: 'Uyarı!',
+                text: 'Lütfen tüm alanları doldurun.',
+                icon: 'warning',
+                padding: '2em',
+            });
+            return;
+        }
         const post_id = Math.floor(100000 + Math.random() * 900000).toString();
         const postCategoryRef = doc(db, 'postCategory', post_id);
         setLoading(true);
@@ -64,12 +77,13 @@ const AddCategory = () => {
                 icon: 'success',
                 padding: '2em',
             });
+            setSelectedOptions([]);
             setNewCategory({
                 postCategory_id: 0,
                 status: 'pending',
                 createdAt: '',
                 updatedAt: '',
-                whatsCategory: '',
+                whatsCategory: [],
                 postCategory_name: '',
             });
             setLoading(false);
@@ -96,7 +110,16 @@ const AddCategory = () => {
                     </div>
                     <div className="flex flex-col gap-2   w-1/3">
                         <label htmlFor="ctnSelect1">Ana Kategori</label>
-                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
+                        <Select
+                            required
+                            closeMenuOnSelect={false}
+                            className="text-white-dark "
+                            onChange={selectOnChange}
+                            value={selectedOptions}
+                            isMulti
+                            options={options}
+                            placeholder="Kategori Seçiniz..."
+                        />
                     </div>
                 </div>
                 <div>

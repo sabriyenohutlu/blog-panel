@@ -13,6 +13,8 @@ import { TagsInput } from 'react-tag-input-component';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchPostCategories } from '../../../store/postCategorySlice';
 import { AppDispatch } from 'store';
+import { fetchAuthors } from '../../../store/authorSlice';
+
 
 interface AuthorOption {
     value: string;
@@ -64,10 +66,13 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
     const dispatch = useDispatch<AppDispatch>();
+    const authors = useSelector((state: any) => state.author?.authors);
     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const thisUser = useSelector((state: any) => state.users.user);
+  
     const [newNovelRec, setNewNovelRec] = useState({
         novel_recId: 0,
         novel_name: '',
@@ -94,7 +99,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
         novel_bookCategory: [],
         themes: [],
     });
-
+   
     const config = useMemo(
         () => ({
             readonly: false, // all options from https://xdsoft.net/jodit/docs/,
@@ -120,9 +125,31 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
         [placeholder]
     );
 
+
+
     useEffect(() => {
         dispatch(fetchPostCategories());
+        dispatch(fetchAuthors());
     }, [dispatch]);
+
+    console.log(authors)
+
+    let groupNames = postCategories?.reduce((result, item) => {
+        result[item.whatsCategory] = []
+        return result;
+      }, {});
+    
+    
+      Object.keys(groupNames).forEach(whatsCategory => {
+        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
+        groupNames[whatsCategory] =  Object.values(findCategories);
+      });
+
+        const options = groupNames["Roman"]
+       ?.map(({ postCategory_name }) => ({
+           value: postCategory_name,
+          label: postCategory_name,
+        }));
 
     const [tags, setTags] = useState<string[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
@@ -138,10 +165,10 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
         }
     };
 
-    const formattedAuthors = authorsData.authors.map((author) => ({
-        value: author.bookauthor_name, // label ve value olarak kullanacağımız değer
-        label: author.bookauthor_name, // label değeri
-        author_id: author.bookauthor_id, // Yazarın ID'si
+    const formattedAuthors = authors?.map((author) => ({
+        value: author.author_name, // label ve value olarak kullanacağımız değer
+        label: author.author_name, // label değeri
+        author_id: author.author_id, // Yazarın ID'si
     }));
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -166,12 +193,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
         }));
     };
 
-    const options = postCategories
-    .filter((category: any) => category.whatsCategory.some((item:any) => item === 'Roman'))
-    .map(({ postCategory_name }: { postCategory_name: string }) => ({
-        value: postCategory_name,
-        label: postCategory_name,
-    }));
+ 
 
     const selectOnChange = (e: any) => {
         setNewNovelRec((prev) => ({
@@ -185,6 +207,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
 
         const post_id = Math.floor(100000 + Math.random() * 900000).toString();
         const novelRecRef = doc(db, 'novelRecommendation', post_id);
+        const author = thisUser?.uid;
         setUploading(true);
         let urledTitle = '';
         const now = new Date();
@@ -212,6 +235,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 novel_recId: post_id,
                 status: status,
+                author_id: author
             });
 
             // Alt koleksiyon (reviewBody) ekleme
@@ -278,12 +302,12 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
                     <div className="flex flex-col justify-between gap-2 w-1/3">
                         <label>Öneri Başlığı</label>
                         <input name="novel_recTitle" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelRec.novel_recTitle} />
-                        <label>Özet Bilgi</label>
+                        <label>Öneri Kısa Bilgi</label>
                         <input name="novel_summaryInfo" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelRec.novel_summaryInfo} />
-                        <label>Roman Adı</label>
-                        <input name="novel_name" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelRec.novel_name} />
-                        <label htmlFor="ctnSelect1">Roman Yazarı</label>
-                        <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} />
+                        {/* <label>Roman Adı</label>
+                        <input name="novel_name" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelRec.novel_name} /> */}
+                        {/* <label htmlFor="ctnSelect1">Roman Yazarı</label>
+                        <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} /> */}
                         <label htmlFor="ctnSelect2">Roman Temaları</label>
                         <TagsInput value={themes} onChange={setThemes} name="themes" placeHolder="Tema giriniz" />
                     </div>
@@ -297,6 +321,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
                                 ? newNovelRec.novel_bookCategory.map((item: any) => <span key={item}>{item}</span>)
                                 : ''}
                         </div>
+                    
                         <div className="w-full ">
                             <label>Taglar</label>
                             <TagsInput value={tags} onChange={setTags} name="fruits" placeHolder="Tag giriniz" />

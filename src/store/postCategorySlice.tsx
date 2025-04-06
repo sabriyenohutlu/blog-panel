@@ -11,14 +11,14 @@ type PostCategoryType = {
 };
 type PostCategoryState = {
     postCategories: PostCategoryType[];
-    loading:boolean;
+    loading: boolean;
     error: string | null;
-}
-const initialState:PostCategoryState = {
+};
+const initialState: PostCategoryState = {
     postCategories: [],
     loading: false,
-    error: null
-}
+    error: null,
+};
 export const fetchPostCategories = createAsyncThunk<PostCategoryType[], void, { rejectValue: string }>('postCategories/fetchPostCategories', async (_, { rejectWithValue }) => {
     try {
         const postCategoryCollection = collection(db, 'postCategory');
@@ -32,11 +32,10 @@ export const fetchPostCategories = createAsyncThunk<PostCategoryType[], void, { 
                 createdAt: data.createdAt,
                 status: data.status,
                 updatedAt: data.updatedAt,
-                whatsCategory: data.whatsCategory
+                whatsCategory: data.whatsCategory,
             };
         });
         return postCategories;
-   
     } catch (error) {
         return rejectWithValue('Hata oluştu');
     }
