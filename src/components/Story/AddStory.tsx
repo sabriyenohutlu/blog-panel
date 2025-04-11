@@ -222,7 +222,7 @@ const AddStory: React.FC<Props> = ({ placeholder }) => {
 
             // Alt koleksiyon (reviewBody) ekleme
             const storyBodyRef = collection(storyRef, 'storyBody');
-            await setDoc(doc(storyBodyRef), {
+            await setDoc(doc(storyBodyRef,post_id), {
                 body: content,
             });
 

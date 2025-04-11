@@ -88,7 +88,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
         createdAt: new Date(),
         updatedAt: new Date(),
         rating: 0,
-        poetry_category: '',
+        poetry_category: [],
         themes: [],
     });
 
@@ -158,7 +158,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
       });
 
         const options = groupNames["Şiir"]
-       .map(({ postCategory_name }: { postCategory_name: string }) => ({
+       ?.map(({ postCategory_name }) => ({
            value: postCategory_name,
           label: postCategory_name,
         }));
@@ -207,7 +207,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
 
             // Alt koleksiyon (reviewBody) ekleme
             const poetryBodyRef = collection(poetryRef, 'poetryBody');
-            await setDoc(doc(poetryBodyRef), {
+            await setDoc(doc(poetryBodyRef,post_id), {
                 body: content,
             });
 
@@ -242,7 +242,7 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
                 createdAt: new Date(),
                 updatedAt: new Date(),
                 rating: 0,
-                poetry_category: '',
+                poetry_category: [],
                 themes: [],
             });
             setThemes([]);
@@ -273,9 +273,9 @@ const AddPoetry: React.FC<Props> = ({ placeholder }) => {
                     <div className="flex flex-col justify-between gap-2 w-2/6">
                         <label>Şiir Başlığı</label>
                         <input name="poetry_title" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newPoetry.poetry_title} />
-                        <label>Özet Bilgi</label>
-                        <input name="poetry_summaryInfo" type="text" placeholder="..." className="form-input " required onChange={onChange} value={newPoetry.poetry_summaryInfo} />
-                        <label>Yazar Adı</label>
+                        {/* <label>Özet Bilgi</label>
+                        <input name="poetry_summaryInfo" type="text" placeholder="..." className="form-input " required onChange={onChange} value={newPoetry.poetry_summaryInfo} /> */}
+                        <label>Şair Adı</label>
                         <input name="poetryOfWho" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newPoetry.poetryOfWho} />
 
                         <label htmlFor="ctnSelect2">Şiir Temaları</label>

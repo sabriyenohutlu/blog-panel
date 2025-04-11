@@ -150,6 +150,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
            value: postCategory_name,
           label: postCategory_name,
         }));
+        console.log("groupnames",groupNames)
 
     const [tags, setTags] = useState<string[]>([]);
     const [themes, setThemes] = useState<string[]>([]);
@@ -223,7 +224,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
             return { urledTitle, post_id }; // Her iki değeri döndürüyoruz
         };
 
-        const finalUrlTitle = createUrlTitle(newNovelRec.novel_name);
+        const finalUrlTitle = createUrlTitle(newNovelRec.novel_recTitle);
         try {
             // b = await uploadImage(urledTitle);
             await setDoc(novelRecRef, {
@@ -240,7 +241,7 @@ const AddNovelRecommendation: React.FC<Props> = ({ placeholder }) => {
 
             // Alt koleksiyon (reviewBody) ekleme
             const recBodyRef = collection(novelRecRef, 'recBody');
-            await setDoc(doc(recBodyRef), {
+            await setDoc(doc(recBodyRef,post_id), {
                 body: content,
             });
 

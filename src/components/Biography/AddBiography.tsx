@@ -230,7 +230,7 @@ const AddBiography: React.FC<Props> = ({ placeholder }) => {
 
             // Alt koleksiyon (reviewBody) ekleme
             const bioBodyRef = collection(biographyRef, 'bioBody');
-            await setDoc(doc(bioBodyRef), {
+            await setDoc(doc(bioBodyRef,post_id), {
                 body: content,
             });
 

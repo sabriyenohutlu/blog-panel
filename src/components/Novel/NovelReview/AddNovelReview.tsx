@@ -95,7 +95,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         updatedAt: new Date(),
         rating: 0,
         novel_bookCategory: [],
-        period: '',
+        period: ''
     });
     useEffect(() => {
         dispatch(fetchPostCategories());
@@ -259,7 +259,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
 
             // Alt koleksiyon (reviewBody) ekleme
             const reviewBodyRef = collection(novelReviewRef, 'reviewBody');
-            await setDoc(doc(reviewBodyRef), {
+            await setDoc(doc(reviewBodyRef,post_id), {
                 body: content,
             });
 
