@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
 import Tippy from '@tippyjs/react';
 import '../../TippyTooltip/tippy.css';
 import { PiEye } from 'react-icons/pi';
+import { RiPushpinLine } from 'react-icons/ri';
+import { RiUnpinFill } from "react-icons/ri";
 
 const NovelReviewTable = () => {
     const dispatch = useDispatch<AppDispatch>();
@@ -98,6 +100,24 @@ const NovelReviewTable = () => {
         }
     };
 
+   const pinBtnClickHandler = async (e: any, novel_reviewId: number) => {
+        try {
+            const reviewRef = doc(db, 'novelReview', novel_reviewId.toString()); // Firestore'daki kaydın referansı
+
+            const newStatus = 'pinned'; // 'pinned' durumu için manuel olarak ayarlandı
+
+            await updateDoc(reviewRef, {
+                pinned: true, // Durumu 'pinned' yapıyoruz
+                updatedAt: new Date(), // 'updatedAt' zamanını güncelliyoruz
+            });
+            showMessage2('Yazı Öne Çıkarıldı.', 'success');
+            dispatch(fetchReviews());
+            console.log(`Review status updated to ${newStatus}!`);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+   }
+
     const statusColors: { [key: string]: string } = {
         completed: 'text-success',
         pending: 'text-secondary',
@@ -128,6 +148,7 @@ const NovelReviewTable = () => {
                             <th>Editör</th>
                             <th>Yayınlanma Tarihi</th>
                             <th>Durum</th>
+                            <th>Öne Çıkar</th>
                             <th className="text-center">İşlemler</th>
                             <th className="text-center">Sayfalar</th>
                         </tr>
@@ -149,6 +170,13 @@ const NovelReviewTable = () => {
                                         <div className={`whitespace-nowrap ${statusColors[data.status] || statusColors.default}`}>
                                             {`${statusTranslations[data.status] || statusTranslations.default}`}
                                         </div>
+                                    </td>
+                                    <td>
+                                        <Tippy content="Öne Çıkar" allowHTML={true} delay={0} animation="fade" theme="light">
+                                            <button onClick={async (e: any) => pinBtnClickHandler(e, data.novel_reviewId)} disabled={data.pinned === true}>
+                                               {data.pinned === false ? <RiUnpinFill size={24} /> :  <RiPushpinLine size={24} />}
+                                            </button>
+                                        </Tippy>
                                     </td>
                                     <td className="text-center">
                                         <div className="flex flex-row justify-start gap-2">

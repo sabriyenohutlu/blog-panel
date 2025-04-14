@@ -12,10 +12,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from 'store';
 import { fetchPostCategories } from '../../../store/postCategorySlice';
 import { fetchAuthors } from '../../../store/authorSlice';
+import { getOptionsByCategory, groupBy,getOptionsByAuthor } from '../../../utils/groupByFunction';
 interface AuthorOption {
     value: string;
     label: string;
-    author_id: number;
 }
 type Props = {
     placeholder?: string;
@@ -40,7 +40,6 @@ type NewNovelReviewType = {
     status: string;
     tags: string[];
     url: string;
-    bookauthor_id: string;
     bookauthor_name: string;
     novel_recordedDate: any;
     comments: string[];
@@ -64,8 +63,8 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
     const editor = useRef<any>(null);
     const [content, setContent] = useState('');
     const dispatch = useDispatch<AppDispatch>();
-     const postCategories = useSelector((state: any) => state.postCategories.postCategories);
-     const authors = useSelector((state: any) => state.author.authors);
+    const postCategories = useSelector((state: any) => state.postCategories.postCategories);
+    const authors = useSelector((state: any) => state.author.authors);
     const [selectedImage, setSelectedImage] = useState<number | null>(0);
     const [preview, setPreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
@@ -80,10 +79,10 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         subCategory_id: 176801,
         subCategory_name: 'novelReview',
         subCategory_title: 'roman-incelemesi',
+        pinned: false,
         author_id: '',
         status: 'pending',
         tags: [], //gönderirken tags ekle yolla
-        bookauthor_id: '',
         bookauthor_name: '',
         novel_recordedDate: new Date(),
         comments: [],
@@ -95,29 +94,18 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
         updatedAt: new Date(),
         rating: 0,
         novel_bookCategory: [],
-        period: ''
+        period: '',
     });
     useEffect(() => {
         dispatch(fetchPostCategories());
         dispatch(fetchAuthors());
     }, [dispatch]);
 
-    let groupNames = postCategories?.reduce((result, item) => {
-        result[item.whatsCategory] = []
-        return result;
-      }, {});
-    
-    
-      Object.keys(groupNames).forEach(whatsCategory => {
-        let findCategories = postCategories.filter(i => i.whatsCategory == whatsCategory);
-        groupNames[whatsCategory] =  Object.values(findCategories);
-      });
+    const groupNames = useMemo(() => groupBy(postCategories, 'whatsCategory'), [postCategories]);
+    const romanOptions = useMemo(() => getOptionsByCategory(groupNames, 'Roman'), [groupNames]);
 
-        const options = groupNames["Roman"]
-       ?.map(({ postCategory_name }) => ({
-           value: postCategory_name,
-          label: postCategory_name,
-        }));
+    const romanAuthors =  useMemo(() => groupBy(authors, 'mainCategory_title'), [authors]);
+    const romanAuthorsOptions = useMemo(() => getOptionsByAuthor(romanAuthors, 'Roman'), [romanAuthors]);   
 
     const [fancyboxIsActive, setFancyboxIsActive] = useState(false);
 
@@ -181,17 +169,9 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
             setNewNovelReview((prev: any) => ({
                 ...prev,
                 bookauthor_name: selectedOption.value, // Seçilen yazarın adı
-                bookauthor_id: selectedOption.author_id, // Yazarın ID'si
             }));
         }
     };
-
-
-    const formattedAuthors = authors.map((author) => ({
-        value: author.author_name, // label ve value olarak kullanacağımız değer
-        label: author.author_name, // label değeri
-        author_id: author.author_id, // Yazarın ID'si
-    }));
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
@@ -254,12 +234,12 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 tags: tags,
                 novel_reviewId: post_id,
                 status: status,
-                author_id: author
+                author_id: author,
             });
 
             // Alt koleksiyon (reviewBody) ekleme
             const reviewBodyRef = collection(novelReviewRef, 'reviewBody');
-            await setDoc(doc(reviewBodyRef,post_id), {
+            await setDoc(doc(reviewBodyRef, post_id), {
                 body: content,
             });
 
@@ -279,10 +259,10 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 subCategory_title: 'roman-incelemesi',
                 subCategory_id: 176801,
                 subCategory_name: 'novelReview',
+                pinned:false,
                 author_id: '',
                 status: 'pending',
                 tags: [], //gönderirken tags ekle yolla
-                bookauthor_id: '',
                 bookauthor_name: '',
                 novel_recordedDate: new Date(),
                 comments: [],
@@ -320,13 +300,13 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
                 <div className="flex flex-row w-full justify-between">
                     <div className="flex flex-col justify-between gap-2 w-3/1">
                         <label>İnceleme Başlığı</label>
-                        <input name="novel_reviewTitle" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_reviewTitle} />
+                        <input name="novel_reviewTitle" type="text" placeholder="İnceleme başlığı" className="form-input" required onChange={onChange} value={newNovelReview.novel_reviewTitle} />
                         <label>Özet Bilgi</label>
-                        <input name="novel_summaryInfo" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_summaryInfo} />
+                        <input name="novel_summaryInfo" type="text" placeholder="Özet bilgi" className="form-input" required onChange={onChange} value={newNovelReview.novel_summaryInfo} />
                         <label>Roman Adı</label>
-                        <input name="novel_name" type="text" placeholder="..." className="form-input" required onChange={onChange} value={newNovelReview.novel_name} />
+                        <input name="novel_name" type="text" placeholder="Roman adı" className="form-input" required onChange={onChange} value={newNovelReview.novel_name} />
                         <label htmlFor="ctnSelect1">Kitap Yazarı</label>
-                        <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={formattedAuthors} />
+                        <Select isSearchable placeholder="Yazar seçiniz" onChange={onSelectChange} options={romanAuthorsOptions} />
                         <label htmlFor="ctnSelect2">Roman Dönemi</label>
                         <select onChange={onChange} id="ctnSelect1" className="form-multiselect  w-96 text-white-dark" name="period" value={newNovelReview.period}>
                             <option>Dönem seçiniz</option>
@@ -342,13 +322,7 @@ const AddNovelReview: React.FC<Props> = ({ placeholder }) => {
 
                     <div className="flex flex-col gap-2   w-2/6">
                         <label htmlFor="ctnSelect1">Roman Kategorisi</label>
-                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={options} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
-                        <div className="flex flex-col  flex-wrap mt-4">
-                            <span>Seçilen Kategoriler</span>
-                            {Array.isArray(newNovelReview.novel_bookCategory) && newNovelReview.novel_bookCategory.length > 0
-                                ? newNovelReview.novel_bookCategory.map((item: any) => <span key={item}>{item}</span>)
-                                : ''}
-                        </div>
+                        <Select closeMenuOnSelect={false} className="text-white-dark " isMulti options={romanOptions} placeholder="Kategori Seçiniz..." onChange={selectOnChange} />
                         <div className="w-full ">
                             <label>Taglar</label>
                             <TagsInput value={tags} onChange={setTags} name="fruits" placeHolder="Tag giriniz" />

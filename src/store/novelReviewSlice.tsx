@@ -13,6 +13,7 @@ type NovelReviewType = {
     subCategory_id: number;
     subCategory_name: string;
     author_id: string;
+    pinned: boolean;
     status: string;
     subCategory_title: string;
     tags: string[];
@@ -67,6 +68,7 @@ export const fetchReviews = createAsyncThunk<
                 subCategory_id: data.subCategory_id,
                 subCategory_name: data.subCategory_name,
                 author_id: data.author_id,
+                pinned: data.pinned,
                 status: data.status,
                 body: data.body,
                 tags: data.tags,
