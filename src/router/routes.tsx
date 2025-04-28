@@ -29,9 +29,10 @@ import RecoverIdCover from '../pages/Authentication/RecoverIdCover';
 import RecoverIdBox from '../pages/Authentication/RecoverIdBox';
 import UnlockBox from '../pages/Authentication/UnlockBox';
 import ProfilePage from '../pages/ProfilePage';
-import {RouteObject } from 'react-router-dom';
+import { RouteObject } from 'react-router-dom';
 import AddCategoryPage from '../pages/AddCategoryPage';
 import AddAuthorPage from '../pages/AddAuthorPage';
+import BlogDetailPage from '../pages/BlogDetailPage';
 
 const Index = lazy(() => import('../pages/Index'));
 
@@ -43,27 +44,27 @@ type RouteConfig = RouteObject & {
 const authRoutes: RouteConfig[] = [
     {
         path: '/',
-        element: <LoginBoxed />
+        element: <LoginBoxed />,
     },
     {
         path: '/auth/boxed-signup',
-        element: <RegisterBoxed />
+        element: <RegisterBoxed />,
     },
     {
         path: '/auth/boxed-lockscreen',
-        element: <UnlockBox />
+        element: <UnlockBox />,
     },
     {
         path: '/auth/boxed-password-reset',
-        element: <RecoverIdBox />
+        element: <RecoverIdBox />,
     },
     {
         path: '/auth/cover-lockscreen',
-        element: <UnlockCover />
+        element: <UnlockCover />,
     },
     {
         path: '/auth/cover-password-reset',
-        element: <RecoverIdCover />
+        element: <RecoverIdCover />,
     },
 ];
 
@@ -71,117 +72,120 @@ const routes: RouteConfig[] = [
     // dashboard
     {
         path: '/',
-        element: <Index />
+        element: <Index />,
     },
     {
         path: '/icerik-yonetimi',
-        element: <ContentManagement />
+        element: <ContentManagement />,
     },
     {
         path: '/kullanici-yonetimi',
-        element: <UserManagement />
+        element: <UserManagement />,
     },
     {
         path: '/icerik-yonetimi/roman',
-        element: <NovelReviewPage />
+        element: <NovelReviewPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-incelemeleri',
-        element: <NovelReviewPage />
+        element: <NovelReviewPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-incelemesi-ekle',
-        element: <AddNovelReviewPage />
+        element: <AddNovelReviewPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-incelemesi-guncelle/:novel_reviewId',
-        element: <UpdateNovelReviewPage />
+        element: <UpdateNovelReviewPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-incelemesi-detay/:novel_reviewId',
-        element: <NovelReviewDetailPage />
+        element: <NovelReviewDetailPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-onerisi-ekle',
-        element: <AddNovelRecommendationPage />
+        element: <AddNovelRecommendationPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-onerisi-detay/:novel_recId',
-        element: <NovelRecommendationDetailPage />
+        element: <NovelRecommendationDetailPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-ozeti-ekle',
-        element: <AddNovelSummaryPage />
+        element: <AddNovelSummaryPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-ozetleri',
-        element: <NovelSummaryPage />
+        element: <NovelSummaryPage />,
     },
     {
         path: '/icerik-yonetimi/roman/roman-onerileri',
-        element: <NovelRecommendationPage />
+        element: <NovelRecommendationPage />,
     },
     {
         path: '/icerik-yonetimi/hikaye/hikaye-ekle',
-        element: <AddStoryPage />
+        element: <AddStoryPage />,
     },
     {
         path: '/icerik-yonetimi/hikaye/hikayeler',
-        element: <StoryPage />
+        element: <StoryPage />,
     },
     {
         path: '/icerik-yonetimi/hikaye/hikaye-detay/:story_id',
-        element: <StoryDetailPage />
+        element: <StoryDetailPage />,
     },
     {
         path: '/icerik-yonetimi/siir/siirler',
-        element: <PoetryPage />
+        element: <PoetryPage />,
     },
     {
         path: '/icerik-yonetimi/siir/siir-ekle',
-        element: <AddPoetryPage />
+        element: <AddPoetryPage />,
     },
     {
         path: '/icerik-yonetimi/siir/siir-detay/:poetry_id',
-        element: <PoetryDetailPage />
+        element: <PoetryDetailPage />,
     },
     {
         path: '/icerik-yonetimi/biyografi/biyografiler',
-        element: <BiographyPage />
+        element: <BiographyPage />,
     },
     {
         path: '/icerik-yonetimi/biyografi/biyografi-ekle',
-        element: <AddBiographyPage />
+        element: <AddBiographyPage />,
     },
     {
         path: '/icerik-yonetimi/gunluk-soz/gunluk-soz-ekle',
-        element: <AddDailyWordPage />
+        element: <AddDailyWordPage />,
     },
     {
         path: '/icerik-yonetimi/gunluk-soz/gunluk-sozler',
-        element: <DailyWordPage />
+        element: <DailyWordPage />,
     },
     {
         path: '/icerik-yonetimi/blog/blog-yazilari',
         element: <BlogPage />,
     },
     {
-        path: '/icerik-yonetimi/blog/blog-yazi-ekle',
-        element: <AddBlogPage />
+        path: '/icerik-yonetimi/blog/blog-ekle',
+        element: <AddBlogPage />,
     },
-
+    {
+        path: '/icerik-yonetimi/blog/blog-detay/:blog_id',
+        element:<BlogDetailPage/>
+    },
     {
         path: '/kullanici-yonetimi/profil',
-        element: <ProfilePage />
+        element: <ProfilePage />,
     },
     {
-        path:"/tanimlamalar/kategori-ekle",
-        element:<AddCategoryPage/>
+        path: '/tanimlamalar/kategori-ekle',
+        element: <AddCategoryPage />,
     },
     {
-        path:"/tanimlamalar/yazar-ekle",
-        element:<AddAuthorPage/>
-    }
+        path: '/tanimlamalar/yazar-ekle',
+        element: <AddAuthorPage />,
+    },
 ];
 
-export { routes, authRoutes};
+export { routes, authRoutes };

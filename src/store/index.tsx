@@ -10,6 +10,7 @@ import userReducer from "./userSlice";
 import categoriesReducer from "./categorySlice";
 import postCategoriesReducer from "./postCategorySlice";
 import authorReducer  from "./authorSlice";
+import blogReducer from "./blogSlice";
 
 const rootReducer = combineReducers({
     themeConfig: themeConfigSlice,
@@ -22,7 +23,8 @@ const rootReducer = combineReducers({
     users: userReducer,
     categories: categoriesReducer,
     postCategories: postCategoriesReducer,
-    author:authorReducer
+    author:authorReducer,
+    blog: blogReducer
     
 });
 

@@ -1,8 +1,217 @@
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, NavLink } from 'react-router-dom';
+import { AppDispatch, IRootState } from '../../store';
+import { useEffect, useState } from 'react';
+import { fetchBlogs } from '../../store/blogSlice';
+import Swal from 'sweetalert2';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase';
+import Tippy from '@tippyjs/react';
+import { PiEye } from 'react-icons/pi';
+import { BiEdit } from 'react-icons/bi';
+import { FcApproval, FcCancel } from 'react-icons/fc';
+import { RiPushpinLine, RiUnpinFill } from 'react-icons/ri';
 
 const BlogTable = () => {
-  return (
-    <div>BlogTable</div>
-  )
-}
+    const dispatch = useDispatch<AppDispatch>();
+    const blogData = useSelector((state: IRootState) => state.blog.blogs);
+    const [page, setPage] = useState(1);
+    const PAGE_SIZES = [10, 20, 30, 50, 100];
+    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
 
-export default BlogTable
+    useEffect(() => {
+        dispatch(fetchBlogs());
+        setPage(1);
+    }, [dispatch]);
+
+    const showMessage2 = (title: string, color: string) => {
+        Swal.fire({
+            title: `${title}`,
+            toast: true,
+            position: 'top',
+            showConfirmButton: false,
+            timer: 3000,
+            showCloseButton: true,
+            customClass: {
+                popup: `color-${color}`,
+            },
+        });
+    };
+
+    const approvalBtnClickHandler = async (e: any, blog_id: number) => {
+        try {
+            // Firestore'daki ilgili kaydın referansını alıyoruz
+            const blogRef = doc(db, 'blog', blog_id.toString());
+
+            // Kaydın 'status' bilgisini güncelliyoruz
+            await updateDoc(blogRef, {
+                status: 'completed', // Durumu 'completed' olarak güncelliyoruz
+                updatedAt: new Date(), // 'updatedAt' zamanını da güncelliyoruz
+            });
+            showMessage2('Yazı Onaylandı.', 'success');
+            dispatch(fetchBlogs());
+            console.log('Review status updated to completed!');
+        } catch (error) {
+            // Hata durumunda kullanıcıyı bilgilendirebiliriz
+            console.error('Error updating status:', error);
+        }
+    };
+
+    const canceledBtnClickHandler = async (e: any, blog_id: number) => {
+        try {
+            const blogRef = doc(db, 'blog', blog_id.toString()); // Firestore'daki kaydın referansı
+
+            const newStatus = 'canceled'; // 'canceled' durumu için manuel olarak ayarlandı
+
+            await updateDoc(blogRef, {
+                status: newStatus, // Durumu 'canceled' yapıyoruz
+                updatedAt: new Date(), // 'updatedAt' zamanını güncelliyoruz
+            });
+            showMessage2('Yazı Geri Alındı.', 'danger');
+            dispatch(fetchBlogs());
+            console.log(`Review status updated to ${newStatus}!`);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
+    const pinBtnClickHandler = async (e: any, blog_id: number) => {
+        try {
+            const blogRef = doc(db, 'blog', blog_id.toString()); // Firestore'daki kaydın referansı
+
+            const newStatus = 'pinned'; // 'pinned' durumu için manuel olarak ayarlandı
+
+            await updateDoc(blogRef, {
+                pinned: true, // Durumu 'pinned' yapıyoruz
+                updatedAt: new Date(), // 'updatedAt' zamanını güncelliyoruz
+            });
+            showMessage2('Yazı Öne Çıkarıldı.', 'success');
+            dispatch(fetchBlogs());
+            console.log(`Review status updated to ${newStatus}!`);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    };
+
+    const takeBackPinBtnClickHandler = async(e: any, blog_id: number) => {
+        try {
+            const blogRef = doc(db, 'blog', blog_id.toString()); // Firestore'daki kaydın referansı
+
+            const newStatus = 'pinned'; // 'pinned' durumu için manuel olarak ayarlandı
+
+            await updateDoc(blogRef, {
+                pinned: false, 
+                updatedAt: new Date(), // 'updatedAt' zamanını güncelliyoruz
+            });
+            showMessage2('Yazı Öne Çıkarmayı Geri Al.', 'success');
+            dispatch(fetchBlogs());
+            console.log(`Review status updated to ${newStatus}!`);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    }
+
+    const statusColors: { [key: string]: string } = {
+        completed: 'text-success',
+        pending: 'text-secondary',
+        inProgress: 'text-info',
+        canceled: 'text-danger',
+        default: 'text-success',
+    };
+
+    const statusTranslations: { [key: string]: string } = {
+        completed: 'Yayında',
+        pending: 'Onay bekliyor',
+        inProgress: 'Taslak Aşamasında',
+        canceled: 'Geri Alındı',
+        default: 'Onay bekliyor',
+    };
+
+    console.log(blogData);
+
+    return (
+        <div className="panel mt-6 flex flex-col gap-4">
+            <Link className="block" to="/icerik-yonetimi/blog/blog-ekle">
+                <button className="btn btn-sm btn-primary"> Yeni Blog Yazısı Ekle</button>
+            </Link>
+            <div className="table-responsive mb-5">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>İnceleme Başlığı</th>
+                            <th>Editör</th>
+                            <th>Yayınlanma Tarihi</th>
+                            <th>Durum</th>
+                            <th>Öne Çıkar</th>
+                            <th className="text-center">İşlemler</th>
+                            <th className="text-center">Sayfalar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {blogData?.map((data: any) => {
+                            return (
+                                <tr key={data.novel_reviewId}>
+                                    <td>
+                                        <div className="whitespace-nowrap">{data.blog_title}</div>
+                                    </td>
+                                    <td>{data.author_name}</td>
+                                    <td>
+                                        <td>{new Date(data.createdAt.seconds * 1000).toLocaleString()}</td>
+                                    </td>
+                                    {/* <td>{data.createdAt}</td> */}
+                                    <td>
+                                        <div className={`whitespace-nowrap ${statusColors[data.status] || statusColors.default}`}>
+                                            {`${statusTranslations[data.status] || statusTranslations.default}`}
+                                        </div>
+                                    </td>
+                                    <td>
+                                         <Tippy content="Öne Çıkarmayı Geri Al" allowHTML={true} delay={0} animation="fade" theme="light">
+                                            <button onClick={async (e: any) => takeBackPinBtnClickHandler(e, data.blog_id)} disabled={data.pinned === false}>
+                                                {data.pinned === true || '' ? <RiUnpinFill size={24} /> : ''}
+                                            </button>
+                                        </Tippy> 
+                                         <Tippy content="Öne Çıkar" allowHTML={true} delay={0} animation="fade" theme="light">
+                                            <button onClick={async (e: any) => pinBtnClickHandler(e, data.blog_id)} disabled={data.pinned === true}>
+                                                {data.pinned === false ?<RiPushpinLine size={24} />  : ''}
+                                            </button>
+                                        </Tippy> 
+                                    </td>
+                                    <td className="text-center">
+                                        <div className="flex flex-row justify-start gap-2">
+                                            <Tippy content="Yayınla" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <button onClick={(e: any) => approvalBtnClickHandler(e, data.blog_id)} disabled={data.status === 'completed'}>
+                                                    {data.status === 'completed' ? '' : <FcApproval size={24} />}
+                                                </button>
+                                            </Tippy>
+                                            <Tippy content="Geri Al" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <button onClick={(e: any) => canceledBtnClickHandler(e, data.blog_id)} disabled={data.status === 'canceled'}>
+                                                    {data.status === 'canceled' ? '' : <FcCancel size={24} />}
+                                                </button>
+                                            </Tippy>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div className="flex flex-row justify-start gap-2">
+                                            <Tippy content="Detay" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <NavLink to={`/icerik-yonetimi/blog/blog-detay/${data.blog_id}`}>
+                                                    <PiEye size={24} />
+                                                </NavLink>
+                                            </Tippy>
+                                            <Tippy content="Güncelle" allowHTML={true} delay={0} animation="fade" theme="light">
+                                                <NavLink to={`/icerik-yonetimi/blog/blog-guncelle/${data.blog_id}`}>
+                                                    <BiEdit size={24} />
+                                                </NavLink>
+                                            </Tippy>
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+};
+
+export default BlogTable;
